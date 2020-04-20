@@ -1,0 +1,38 @@
+#   Common Vars
+availability_zone: melbourne-qh2-uom
+
+instance_network: qh2-uom-internal
+instance_image: 45225edb-66d8-4fd0-bf41-132a31a18166 # Ubuntu 18.04
+instance_key_name: Macbook # ssh private key
+flavor_1c4g: uom.mse.1c4g
+flavor_2c9g: uom.mse.2c9g
+
+host_file: inventory/hosts.ini
+host_groups: COMP90024
+
+#   Security Groups
+security_groups:
+  - name: couchdb
+    description: Allow CouchDB (port 5984) from world
+    protocol: tcp
+    port_range_min: 5984
+    port_range_max: 5984
+    remote_ip_prefix: 0.0.0.0/0
+  - name: frp
+    description: Allow frp (port 7000) from world
+    protocol: tcp
+    port_range_min: 7000
+    port_range_max: 7000
+    remote_ip_prefix: 0.0.0.0/0
+
+
+#   Instances
+instances:
+  - name: instance1
+    security_groups:
+      - ssh
+      - couchdb
+      - frp
+    flavor: '{{ flavor_1c4g }}'
+
+
