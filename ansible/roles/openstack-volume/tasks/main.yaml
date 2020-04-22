@@ -1,0 +1,16 @@
+- name: Create volumes
+  os_volume:
+    display_name: '{{ item.volume.name }}'
+    size: '{{ item.volume.size }}'
+    availability_zone: '{{ availability_zone }}'
+    wait: yes
+    timeout: 600
+    state: present
+  loop: '{{ instances }}'
+
+- name: Attach volume to instance
+  os_server_volume:
+      server: '{{ item.name }}'
+      volume: '{{ item.volume.name }}'
+      state: present
+  loop: '{{ instances }}'

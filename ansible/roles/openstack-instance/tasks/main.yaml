@@ -3,12 +3,10 @@
     name: '{{ item.name }}'
     image: '{{ instance_image }}'
     key_name: '{{ instance_key_name }}'
-    flavor: '{{ item.flavor }}'
+    flavor: '{{ instance_flavor }}'
     availability_zone: '{{ availability_zone }}'
-    security_groups: '{{ item.security_groups }}'
+    security_groups: '{{ common_security_groups + item.security_groups }}'
     network: '{{ instance_network }}'
-    # volumes: "{{ item.volume_ids }}"
-    auto_floating_ip: yes
     wait: yes
     timeout: 600
     state: present
@@ -26,11 +24,22 @@
 
 - name: Create inventory file on disk
   copy:
-    content: "[{{ host_groups }}]\n"
     dest: '{{ host_file }}'
+    content: |
+        [db_server:children]
+        db_master
+        db_slave
+
+        [db_master:children]
+        instance1
+
+        [db_slave:children]
+        instance2
+        instance3  
+        
 
 - name: Add ip addresses to inventory file
   lineinfile:
-    line: "{{ item.ip }}\n"
+    line: "\n[{{ item.name }}]\n{{ item.ip }}"
     dest: '{{ host_file }}'
   loop: '{{ ip_addresses }}'

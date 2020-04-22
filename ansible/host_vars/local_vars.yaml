@@ -3,12 +3,14 @@ availability_zone: melbourne-qh2-uom
 
 instance_network: qh2-uom-internal
 instance_image: 45225edb-66d8-4fd0-bf41-132a31a18166 # Ubuntu 18.04
-instance_key_name: Macbook # ssh private key
-flavor_1c4g: uom.mse.1c4g
-flavor_2c9g: uom.mse.2c9g
+instance_key_name: group # ssh private key
+instance_flavor: uom.mse.2c9g
 
 host_file: inventory/hosts.ini
-host_groups: COMP90024
+
+common_security_groups:
+  - ssh
+  - frp
 
 #   Security Groups
 security_groups:
@@ -30,9 +32,28 @@ security_groups:
 instances:
   - name: instance1
     security_groups:
-      - ssh
       - couchdb
-      - frp
-    flavor: '{{ flavor_1c4g }}'
+    volume:
+      name: volume1
+      size: 80
+  
+  - name: instance2
+    security_groups:
+      - couchdb
+    volume:
+      name: volume2
+      size: 80
 
+  - name: instance3
+    security_groups:
+      - couchdb
+    volume:
+      name: volume3
+      size: 80
 
+  - name: instance4
+    security_groups: []
+      # - couchdb
+    volume:
+      name: volume4
+      size: 10

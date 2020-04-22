@@ -1,0 +1,24 @@
+- name: Install dependencies
+  apt:
+    name: ['xfsprogs']
+    state: latest
+    install_recommends: no
+    update_cache: yes
+
+- name: Make file system
+  filesystem:
+    fstype: xfs
+    dev: "{{ volume.device }}"
+
+- name: Create directory if not exist
+  file:
+    path: "{{ volume.mountpoint }}"
+    state: directory
+    mode: 0755
+
+- name: Mount device
+  mount:
+    path: "{{ volume.mountpoint }}"
+    src: "{{ volume.device }}"
+    fstype: xfs
+    state: mounted
