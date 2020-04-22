@@ -1,0 +1,23 @@
+[common]
+server_addr = {{ item.ip }}
+server_port = 7000
+token = COMP90024
+http_proxy = http://wwwproxy.unimelb.edu.au:8000
+https_proxy = http://wwwproxy.unimelb.edu.au:8000
+
+[ssh-{{ ansible_nodename[-1] }}]
+type = tcp
+local_ip = 127.0.0.1
+local_port = 22
+remote_port = {{ 6000 + ansible_nodename[-1]|int }}
+
+[couchdb-{{ ansible_nodename[-1] }}]
+type = tcp
+local_ip = 127.0.0.1
+local_port = 5984
+remote_port = {{ 9000 + ansible_nodename[-1]|int }}
+
+[couchdb-http-{{ ansible_nodename[-1] }}]
+type = http
+local_port = 5984
+subdomain = couchdb{{ ansible_nodename[-1] }}

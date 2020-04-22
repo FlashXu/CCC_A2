@@ -1,0 +1,68 @@
+- name: docker proxy | create directory
+  file:
+    path: '/etc/systemd/system/docker.service.d'
+    recurse: yes
+    state: directory
+
+- name: docker proxy | add proxy settings
+  blockinfile:
+    path: /etc/systemd/system/docker.service.d/http-proxy.conf
+    create: yes
+    block: |
+        [Service]
+        Environment="HTTP_PROXY={{ proxy }}"
+        Environment="HTTPS_PROXY={{ proxy }}"
+        Environment="http_proxy={{ proxy }}"
+        Environment="https_proxy={{ proxy }}"
+        Environment="no_proxy=localhost,127.0.0.1,localaddress,172.16.0.0/12,.melbourne.rc.nectar.org.au,.storage.unimelb.edu.au,.cloud.unimelb.edu.au"
+  
+- name: docker proxy | restart service
+  command: '{{ item }}'
+  with_items:
+    - systemctl daemon-reload
+    - systemctl restart docker
+
+- name: frp | create directory for archieve
+  file:
+    path: '/tmp/frp'
+    state: directory
+
+- name: frp | download
+  unarchive:
+    src: '{{ frp_download }}'
+    dest: /tmp/frp
+    extra_opts: [--strip-components=1]
+    remote_src: yes
+
+- name: frp | move frpc to $PATH
+  command: mv /tmp/frp/frpc /usr/bin
+
+- name: frp | create directory for frpc.ini
+  file:
+    path: /etc/frp
+    state: directory
+
+- name: frp | upload frpc.ini template
+  tags: reload_frp
+  template:
+    src: frpc.ini.j2
+    dest: /etc/frp/frpc_{{ item.name }}.ini
+  loop: '{{ frp_server }}'
+
+- name: frp | upload frpc.service template
+  tags: reload_frp
+  template:
+    src: frpc.service.j2
+    dest: /etc/systemd/system/frpc_{{ item.name }}.service
+  loop: '{{ frp_server }}'
+
+- name: frp | reload daemon
+  tags: reload_frp
+  command: systemctl daemon-reload
+
+- name: frp | start service
+  tags: reload_frp
+  command: systemctl {{ item[0] }} frpc_{{ item[1].name }}
+  with_nested:
+    - ['enable', 'restart']
+    - '{{ frp_server }}'
