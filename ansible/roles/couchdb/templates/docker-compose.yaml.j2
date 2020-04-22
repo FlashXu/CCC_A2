@@ -7,7 +7,7 @@ services:
     ports:
       - 5984:5984
     volumes:
-      - ./data/master/data:/opt/couchdb/data
+      - /data/master/data:/opt/couchdb/data
     environment:
       - COUCHDB_USER=admin
       - COUCHDB_PASSWORD=admin
