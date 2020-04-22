@@ -1,4 +1,4 @@
-- name: Add proxy
+- name: add proxy to environment
   blockinfile:
     path: /etc/environment
     block: |
@@ -8,9 +8,14 @@
       https_proxy={{ proxy }}
       no_proxy=localhost,127.0.0.1,localaddress,172.16.0.0/12,.melbourne.rc.nectar.org.au,.storage.unimelb.edu.au,.cloud.unimelb.edu.au
 
-- name: Update apt
+- name: set git proxy
+  git_config:
+    name: http.proxy
+    value: '{{ proxy }}'
+
+- name: update apt
   apt:
-    upgrade: yes
+    # upgrade: yes  # will fail on 404
     update_cache: yes
   
 - name: install dependencies
@@ -20,7 +25,7 @@
     install_recommends: no
     update_cache: yes
 
-- name: Update pip
+- name: update pip
   pip:
     name: ['pip']
     state: latest
