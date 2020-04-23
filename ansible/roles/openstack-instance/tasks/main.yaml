@@ -16,4 +16,10 @@
 - name: Add instances to inventory file
   template:
     src: hosts.ini.j2
-    dest: '{{ host_file }}'
+    dest: '{{ host_dir }}/hosts.ini'
+
+- name: Add NAT-traversal inventory file
+  template:
+    src: hosts-traversal.ini.j2
+    dest: '{{ host_dir }}/hosts-{{ item.name }}.ini'
+  loop: '{{ frp_server }}'

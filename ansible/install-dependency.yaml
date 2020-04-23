@@ -4,6 +4,7 @@
 
   vars_files:
     - host_vars/remote_vars.yaml
+    - host_vars/frp_vars.yaml
 
   roles:
     - role: remote-common

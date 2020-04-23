@@ -6,7 +6,7 @@ instance_image: 45225edb-66d8-4fd0-bf41-132a31a18166 # Ubuntu 18.04
 instance_key_name: group # ssh private key
 instance_flavor: uom.mse.2c9g
 
-host_file: inventory/hosts.ini
+host_dir: inventory
 
 common_security_groups:
   - ssh

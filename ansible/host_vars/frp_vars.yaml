@@ -1,3 +1,4 @@
+#   Frp
 frp_download: "https://github.com/fatedier/frp/releases/download/v0.32.1/frp_0.32.1_linux_amd64.tar.gz"
 frp_server:
   - name: hk

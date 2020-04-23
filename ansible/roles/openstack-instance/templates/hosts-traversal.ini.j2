@@ -1,0 +1,18 @@
+[db_server:children]
+db_master
+db_slave
+
+[db_master]
+instance1
+
+[db_slave]
+instance2
+instance3  
+
+[instance]
+{% for item in os_instance.results %}
+{{ item.server.name }} ansible_port={{ 6000 + item.server.name[-1]|int }}
+{% endfor%}
+
+[instance:vars]
+ansible_host={{ item.ip }}

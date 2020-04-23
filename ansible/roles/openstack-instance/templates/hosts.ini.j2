@@ -2,15 +2,14 @@
 db_master
 db_slave
 
-[db_master:children]
+[db_master]
 instance1
 
-[db_slave:children]
+[db_slave]
 instance2
-instance3  
+instance3
 
+[instance]
 {% for item in os_instance.results %}
-[{{ item.server.name }}]
-{{ item.server.public_v4 }}
-
+{{ item.server.name }} ansible_host={{ item.server.public_v4 }}
 {% endfor%}
