@@ -13,33 +13,7 @@
   register: os_instance
   loop: '{{ instances }}'
 
-- name: Set ip address to fact
-  set_fact:
-    ip_addresses: "{{ ip_addresses|default([]) + [ {'name': item.openstack.name, 'ip': item.openstack.public_v4} ] }}"
-  when: item.openstack is defined
-  loop: '{{ os_instance.results }}'
-
-- debug:
-    var: ip_addresses
-
-- name: Create inventory file on disk
-  copy:
+- name: Add instances to inventory file
+  template:
+    src: hosts.ini.j2
     dest: '{{ host_file }}'
-    content: |
-        [db_server:children]
-        db_master
-        db_slave
-
-        [db_master:children]
-        instance1
-
-        [db_slave:children]
-        instance2
-        instance3  
-        
-
-- name: Add ip addresses to inventory file
-  lineinfile:
-    line: "\n[{{ item.name }}]\n{{ item.ip }}"
-    dest: '{{ host_file }}'
-  loop: '{{ ip_addresses }}'
