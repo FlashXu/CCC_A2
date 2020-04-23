@@ -3,6 +3,8 @@ ansible_python_interpreter: /usr/bin/python3
 ansible_user: ubuntu
 ansible_ssh_common_args: '-o StrictHostKeyChecking=no'
 
+#   Working directory
+working_dir: COMP90024
 
 #   Proxy
 proxy: http://wwwproxy.unimelb.edu.au:8000/

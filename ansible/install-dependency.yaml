@@ -8,6 +8,7 @@
 
   roles:
     - role: remote-common
+    - role: remote-git-pull
     - role: remote-mount-volume
     - role: remote-install-docker
     - role: remote-NAT-traversal

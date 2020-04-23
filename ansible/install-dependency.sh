@@ -1,3 +1,7 @@
 #! /bin/bash
 
-. ./openrc.sh; ansible-playbook -i inventory/hosts.ini install-dependency.yaml
+if [[ $# -gt 0 ]]; then
+    frp=-$1
+fi
+
+. ./openrc.sh; ansible-playbook -i inventory/hosts$frp.ini install-dependency.yaml

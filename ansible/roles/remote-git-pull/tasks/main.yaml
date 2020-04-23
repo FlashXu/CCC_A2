@@ -1,0 +1,3 @@
+- git:
+    repo: '{{ repo }}'
+    dest: '/home/{{ ansible_user }}/{{ working_dir }}'
