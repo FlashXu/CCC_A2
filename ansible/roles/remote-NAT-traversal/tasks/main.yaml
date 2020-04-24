@@ -12,15 +12,13 @@
         [Service]
         Environment="HTTP_PROXY={{ proxy }}"
         Environment="HTTPS_PROXY={{ proxy }}"
-        Environment="http_proxy={{ proxy }}"
-        Environment="https_proxy={{ proxy }}"
-        Environment="no_proxy=localhost,127.0.0.1,localaddress,172.16.0.0/12,.melbourne.rc.nectar.org.au,.storage.unimelb.edu.au,.cloud.unimelb.edu.au"
+        Environment="NO_PROXY=localhost,127.0.0.1,localaddress,172.16.0.0/12,.melbourne.rc.nectar.org.au,.storage.unimelb.edu.au,.cloud.unimelb.edu.au"
   
 - name: docker proxy | restart service
-  command: '{{ item }}'
-  with_items:
-    - systemctl daemon-reload
-    - systemctl restart docker
+  systemd:
+    name: docker
+    daemon_reload: yes
+    state: restarted
 
 - name: frp | create directory for archieve
   file:
@@ -56,13 +54,11 @@
     dest: /etc/systemd/system/frpc_{{ item.name }}.service
   loop: '{{ frp_server }}'
 
-- name: frp | reload daemon
+- name: frp | enable service
   tags: reload_frp
-  command: systemctl daemon-reload
-
-- name: frp | start service
-  tags: reload_frp
-  command: systemctl {{ item[0] }} frpc_{{ item[1].name }}
-  with_nested:
-    - ['enable', 'restart']
-    - '{{ frp_server }}'
+  systemd:
+    daemon_reload: yes
+    enabled: yes
+    state: restarted
+    name: 'frpc_{{ item.name }}'
+  loop: '{{ frp_server }}'
