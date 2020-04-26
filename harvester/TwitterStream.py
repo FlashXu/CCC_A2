@@ -71,8 +71,8 @@ def process(tweet):
         db.save(data)
 
     except Exception as e:
-        with open('streamlog.txt', 'w') as f:
-            msg = f'Error: {repr(e)}\n'
+        with open('streamlog.txt', 'a') as f:
+            msg = f'{data["_id"]}: {repr(e)}\n'
             print(msg)
             f.write(msg)
             sleep(30)

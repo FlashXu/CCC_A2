@@ -1,0 +1,14 @@
+- hosts: all
+  become: yes
+  gather_subset: min
+
+  vars_files:
+    - host_vars/remote_vars.yaml
+    - host_vars/frp_vars.yaml
+
+  roles:
+    - role: remote-common
+    - role: remote-git-pull
+    - role: remote-mount-volume
+    - role: remote-install-docker
+    - role: remote-NAT-traversal

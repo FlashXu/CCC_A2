@@ -1,0 +1,7 @@
+Host github.com
+  Hostname ssh.github.com
+  Port 443
+  StrictHostKeyChecking no
+  IdentityFile /home/ubuntu/.ssh/deploy_key
+  ProxyCommand nc -X connect -x wwwproxy.unimelb.edu.au:8000 %h %p
+  

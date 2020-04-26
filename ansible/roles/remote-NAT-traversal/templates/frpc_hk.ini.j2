@@ -1,0 +1,17 @@
+[common]
+server_addr = {{ frps_server }}
+server_port = 7000
+token = COMP90024
+http_proxy = http://wwwproxy.unimelb.edu.au:8000
+https_proxy = http://wwwproxy.unimelb.edu.au:8000
+
+[ssh-{{ 1 + groups['COMP90024'].index(inventory_hostname) }}]
+type = tcp
+local_ip = 127.0.0.1
+local_port = 22
+remote_port = {{ 6001 + groups['COMP90024'].index(inventory_hostname) }}
+
+[couchdb]
+type = http
+local_port = 5984
+subdomain = couchdb

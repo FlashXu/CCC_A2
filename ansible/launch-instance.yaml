@@ -1,0 +1,11 @@
+- hosts: localhost
+  vars_files:
+    - host_vars/local_vars.yaml
+    - host_vars/frp_vars.yaml
+  gather_facts: false
+
+  roles:
+    - role: openstack-common
+    - role: openstack-security-group
+    - role: openstack-instance
+    - role: openstack-volume

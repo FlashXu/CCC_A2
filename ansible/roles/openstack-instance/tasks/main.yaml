@@ -1,0 +1,25 @@
+- name: Create instances
+  os_server:
+    name: '{{ item.name }}'
+    image: '{{ instance_image }}'
+    key_name: '{{ instance_key_name }}'
+    flavor: '{{ instance_flavor }}'
+    availability_zone: '{{ availability_zone }}'
+    security_groups: '{{ common_security_groups + item.security_groups }}'
+    network: '{{ instance_network }}'
+    wait: yes
+    timeout: 600
+    state: present
+  register: os_instance
+  loop: '{{ instances }}'
+
+- name: Add instances to inventory file
+  template:
+    src: hosts.ini.j2
+    dest: '{{ host_dir }}/hosts.ini'
+
+- name: Add NAT-traversal inventory file
+  template:
+    src: hosts-traversal.ini.j2
+    dest: '{{ host_dir }}/hosts-{{ item.name }}.ini'
+  loop: '{{ frp_server }}'
