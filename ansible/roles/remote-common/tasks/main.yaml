@@ -8,6 +8,25 @@
       https_proxy={{ proxy }}
       no_proxy=localhost,127.0.0.1,localaddress,172.16.0.0/12,.melbourne.rc.nectar.org.au,.storage.unimelb.edu.au,.cloud.unimelb.edu.au
 
+- name: set git http proxy
+  git_config:
+    name: http.proxy
+    value: '{{ proxy }}'
+
+- name: set git ssh proxy
+  template:
+    src: ssh_config.j2
+    dest: '/etc/ssh/ssh_config'
+    mode: 0644
+
+- name: add git deploy key
+  template:
+    src: deploy_key.j2
+    dest: '/home/ubuntu/.ssh/deploy_key'
+    owner: '{{ ansible_user }}'
+    group: '{{ ansible_user }}'
+    mode: 0600
+
 - name: update apt
   apt:
     # upgrade: yes  # will fail on 404
@@ -29,22 +48,3 @@
   template:
     src: "vimrc.j2"
     dest: "/home/{{ ansible_user }}/.vimrc"
-
-- name: set git http proxy
-  git_config:
-    name: http.proxy
-    value: '{{ proxy }}'
-
-- name: set git ssh proxy
-  template:
-    src: ssh_config.j2
-    dest: '/etc/ssh/ssh_config'
-    mode: 0644
-
-- name: add git deploy key
-  template:
-    src: deploy_key.j2
-    dest: '/home/ubuntu/.ssh/deploy_key'
-    owner: '{{ ansible_user }}'
-    group: '{{ ansible_user }}'
-    mode: 0600
