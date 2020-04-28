@@ -7,7 +7,7 @@ from tweepy.streaming import StreamListener
 import utils
 
 
-api = utils.credential[1].api()
+api = utils.api()
 
 # CouchDB connection
 db = utils.db()
@@ -59,6 +59,8 @@ def stream_crawl():
     while True:
         try:
             stream.filter(locations=bounding)
+        except KeyboardInterrupt:
+            break
         except:
             # sleep 5 seconds and restart
             stream.disconnect()
