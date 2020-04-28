@@ -9,8 +9,8 @@ Vue.use(Router);
 export default new Router({
   routes: [
     {
-      path: '/',
-      name: 'index',
+      path: '/login',
+      name: 'login-page',
       components: {
         default: Starter,
         header: StarterNavbar,

@@ -4,7 +4,7 @@
     :class="{ [`footer-${type}`]: type }"
     :data-background-color="backgroundColor"
   >
-    <div class="container">
+    <!-- <div class="container">
       <nav>
         <ul>
           <li>
@@ -37,7 +37,8 @@
           >Creative Tim</a
         >.
       </div>
-    </div>
+    </div> -->
+
   </footer>
 </template>
 <script>

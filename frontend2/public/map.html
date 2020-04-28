@@ -10,20 +10,13 @@
         width: 100%; /* The width is the width of the web page */
       }
     </style>
+    <script src="map.js" content="text/JavaScript"></script>
+    <script defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDXG60896YH8pjO-svO4f7zQlxWBlZHp98&callback=initMap"></script>
   </head>
+
   <body>
     <h3>My Google Maps Demo</h3>
     <!--The div element for the map -->
     <div id="map"></div>
-    <!--Load the API from the specified URL
-    * The async attribute allows the browser to render the page while the API loads
-    * The key parameter will contain your own API key (which is not needed for this tutorial)
-    * The callback parameter executes the initMap() function
-    -->
-    <script src="map.js" content="text/JavaScript"></script>
-    <script
-      defer
-      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDXG60896YH8pjO-svO4f7zQlxWBlZHp98&callback=initMap"
-    ></script>
   </body>
 </html>

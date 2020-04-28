@@ -5,11 +5,15 @@
     </div>
   </div>
 </template>
+
+
 <script>
 export default {
   name: 'starter'
 };
 </script>
+
+
 <style>
 .starter-page {
   min-height: calc(100vh - 95px);
