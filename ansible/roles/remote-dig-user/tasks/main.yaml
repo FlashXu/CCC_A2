@@ -1,0 +1,24 @@
+- name: create directory
+  file:
+    path: '{{ tweet_dir }}'
+    state: directory
+
+- name: copy files
+  copy:
+    src: '../../../harvester/{{ item }}'
+    dest: '{{ tweet_dir }}'
+  with_items:
+    - utils.py
+    - stream_requirement.txt
+    - dig_user.py
+
+- name: install dependency
+  command:
+    chdir: /home/ubuntu/stream
+    cmd: pip3 install -r stream_requirement.txt
+  
+- name: add crontab
+  cron:
+    name: dig user
+    minute: '*/15'
+    job: /usr/bin/python3 /home/ubuntu/stream/dig_user.py > /home/ubuntu/stream/dig.log 2>&1

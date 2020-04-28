@@ -165,3 +165,22 @@ def parse_user(raw_user, level):
     activity = user['followers_count'] + user['friends_count']
 
     return None if activity < 400 or activity > 5000 else user
+
+
+def batch_update_by_username(db, ids, **args):
+    docs = [r.doc for r in db.view(
+        'user_tree/by_name', keys=ids, include_docs=True)]
+    for doc in docs:
+        for k, v in args.items():
+            doc[k] = v
+
+    result = db.update(docs)
+    for r in result:
+        print(r)
+
+
+def update_by_username(db, name, **args):
+    doc = db.view('user_tree/by_name', key=name, include_docs=True).rows[0].doc
+    for k, v in args.items():
+        doc[k] = v
+    db.save(doc)
