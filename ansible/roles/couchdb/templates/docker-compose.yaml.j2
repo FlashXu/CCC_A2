@@ -5,11 +5,15 @@ services:
     image: couchdb
     restart: always
     ports:
+      - 4369:4369
       - 5984:5984
+      - 9100:9100
     volumes:
-      - /data/master/data:/opt/couchdb/data
+      - /data:/opt/couchdb/data
     environment:
-      - COUCHDB_USER=admin
-      - COUCHDB_PASSWORD=admin
-      - NODENAME=172.20.0.2
+      - COUCHDB_USER={{ db_user }}
+      - COUCHDB_PASSWORD={{ db_pwd }}
+      - COUCHDB_SECRET={{ cluster_cookie }}
+      - NODENAME={{ ansible_default_ipv4.address }}
+      - ERL_FLAGS=-setcookie {{ cluster_cookie }}
     container_name: couchdb

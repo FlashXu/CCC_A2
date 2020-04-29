@@ -5,20 +5,39 @@
     owner: "{{ ansible_user }}"
     group: "{{ ansible_user }}"
 
-- name: configure compose
-  tags: couchdb
+- name: copy configure file
   template:
     src: docker-compose.yaml.j2
     dest: "{{ db_dir }}/docker-compose.yaml"
     owner: "{{ ansible_user }}"
     group: "{{ ansible_user }}"
 
-
 - name: run docker compose
   tags: couchdb
   docker_compose:
     project_src: "{{ db_dir }}"
     pull: yes
-    state: present
+    # state: absent
     remove_orphans: yes
+    remove_volumes: yes
     recreate: always
+
+- name: wait for db start up
+  wait_for:
+    port: 5984
+    timeout: 10
+
+- name: copy cluster setup file
+  template:
+    src: setup-cluster.sh.j2
+    dest: "{{ db_dir }}/setup-cluster.sh"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+  when: "'db_master' in group_names"
+
+- name: setup cluster
+  command:
+    cmd: bash setup-cluster.sh
+    chdir: '{{ db_dir }}'
+  when: "'db_master' in group_names"
+  

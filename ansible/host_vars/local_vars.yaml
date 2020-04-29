@@ -15,7 +15,7 @@ common_security_groups:
 #   Security Groups
 security_groups:
   - name: couchdb
-    description: Allow CouchDB (port 5984) from world and (port 9100-9102) for internal network
+    description: Allow CouchDB (port 5984) from world and (port 4369, 9100-9102) for internal network
   - name: frp
     description: Allow frp (port 7000) from world
 
@@ -37,8 +37,11 @@ security_rules_group:
   - name: couchdb
     protocol: tcp
     port_range_min: 9100
-    port_range_max: 9102
-    remote_group: couchdb
+    port_range_max: 9100
+  - name: couchdb
+    protocol: tcp
+    port_range_min: 4369
+    port_range_max: 4369
 
 #   Instances
 instances:
