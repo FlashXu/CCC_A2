@@ -5,7 +5,7 @@
     state: present
   loop: '{{ security_groups }}'
 
-- name: Create security group rules
+- name: Create security rules by ip prefix
   os_security_group_rule:
       security_group: '{{ item.name }}'
       protocol: '{{ item.protocol }}'
@@ -13,7 +13,17 @@
       port_range_min: '{{ item.port_range_min }}'
       port_range_max: '{{ item.port_range_max }}'
       remote_ip_prefix: '{{ item.remote_ip_prefix }}'
-  loop: '{{ security_groups }}'
+  loop: '{{ security_rules_ip_prefix }}'
 
+- name: Create security rules by group
+  os_security_group_rule:
+      security_group: '{{ item.name }}'
+      protocol: '{{ item.protocol }}'
+      state: present
+      port_range_min: '{{ item.port_range_min }}'
+      port_range_max: '{{ item.port_range_max }}'
+      remote_group: '{{ item.remote_group }}'
+  loop: '{{ security_rules_group }}'
+  
 - debug:
     msg: "Security group(s) have been created."
