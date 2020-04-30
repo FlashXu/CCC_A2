@@ -10,6 +10,7 @@
   "dependencies": {
     "bootstrap": "^4.3.0",
     "element-ui": "^2.5.4",
+    "google-maps-api-loader": "^1.1.1",
     "nouislider": "^11.1.0",
     "vue": "^2.6.6",
     "vue-lazy-load": "^0.0.7",
