@@ -3,46 +3,23 @@
     <!-- <div class="page-header clear-filter">
       <div class="page-header-image" style="height:8%;background-color:black"></div>
     </div> -->
-    <div id="map" style="width: 100%; height: 1000px;">
-    </div>
+    <div id ='gmap' style="width: 100%; height: 1000px;"></div>
   </div>
 </template>
 
 
 <script>
 import MainFooter from '@/layout/MainFooter';
+import GoogleMapsApiLoader from 'google-maps-api-loader'
+
 export default {
   name: 'maps-page',
   bodyClass: 'maps-page',
-  components: {
-    SomeComponent: () => {
-      return new Promise((resolve, reject) => {
-        let script = document.createElement('script')
-        script.onload = () => {
-          resolve(import(someComponent))
-        }
-        //script.async = true
-        script.defer = true
-        script.src = "https://maps.googleapis.com/maps/api/js?key=AIzaSyDXG60896YH8pjO-svO4f7zQlxWBlZHp98&callback=initMap"
-        document.head.appendChild(script)
-      })
-    }
-  },
-  mounted() {
-    if (localStorage.getItem('reloaded')) {
-        // The page was just reloaded. Clear the value from local storage
-        // so that it will reload the next time this page is visited.
-        localStorage.removeItem('reloaded');
-    } else {
-        // Set a flag so that we know not to reload the page twice.
-        localStorage.setItem('reloaded', '1');
-        location.reload();
-    }
-  },
+
   methods: {
     initMap() {
       // Styles a map in night mode.
-      var map = new google.maps.Map(document.getElementById("map"), {
+      var map = new google.maps.Map(document.getElementById("gmap"), {
         center: { lat: -25, lng: 130 },
         zoom: 4,
         disableDefaultUI: true,
@@ -296,20 +273,20 @@ export default {
           },
         ],
       });
-      console.log('before load json');
+      console.log('before load json in VUE');
       map.data.loadGeoJson('./GeoJson-Data-master/australian-states.json');
-      console.log('after load json');
+      console.log('after load json in VUE');
       
       //   map.mapTypes.set('myStyle', myStyle);
       //   map.setMapTypeId('myStyle');
     
       //   map.data.setStyle((feature) => ({
-      //     fillColor: "red",
+      //     fillColor: "red",s
       //   }));
     
       // auto zoom after click one region
       map.data.addListener("click", function (e) {
-        bounds = new google.maps.LatLngBounds();
+        let bounds = new google.maps.LatLngBounds();
     
         e.feature.getGeometry().forEachLatLng((x) => bounds.extend(x));
         map.fitBounds(bounds);
@@ -336,6 +313,14 @@ export default {
           console.log(map.getZoom());
       });
     }
+  },
+  mounted() {
+    const googleMapApi = GoogleMapsApiLoader({
+      apiKey: 'AIzaSyDXG60896YH8pjO-svO4f7zQlxWBlZHp98',
+    }).then((google)=>{
+      this.google = googleMapApi;
+      this.initMap();
+    })
   }
 };
 </script>
