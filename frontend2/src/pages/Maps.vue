@@ -3,26 +3,26 @@
     <!-- <div class="page-header clear-filter">
       <div class="page-header-image" style="height:8%;background-color:black"></div>
     </div> -->
-    <div id ='gmap' style="width: 100%; height: 1000px;"></div>
+    <div id="gmap" style="width: 100%; height: 1000px;"></div>
   </div>
 </template>
 
-
 <script>
-import MainFooter from '@/layout/MainFooter';
-import GoogleMapsApiLoader from 'google-maps-api-loader'
+import MainFooter from "@/layout/MainFooter";
+import GoogleMapsApiLoader from "google-maps-api-loader";
 
 export default {
-  name: 'maps-page',
-  bodyClass: 'maps-page',
+  name: "maps-page",
+  bodyClass: "maps-page",
 
   methods: {
-    initMap() {
+    initMap: () => {
       // Styles a map in night mode.
       var map = new google.maps.Map(document.getElementById("gmap"), {
         center: { lat: -25, lng: 130 },
         zoom: 4,
         disableDefaultUI: true,
+        disableDoubleClickZoom: true,
         styles: [
           {
             elementType: "geometry",
@@ -273,141 +273,78 @@ export default {
           },
         ],
       });
-      console.log('before load json in VUE');
-      map.data.loadGeoJson('./GeoJson-Data-master/australian-states.json');
-      console.log('after load json in VUE');
-      
-      //   map.mapTypes.set('myStyle', myStyle);
-      //   map.setMapTypeId('myStyle');
-    
-      //   map.data.setStyle((feature) => ({
-      //     fillColor: "red",s
-      //   }));
-    
+
+      map.data.loadGeoJson("./GeoJson-Data-master/australian-states.json", {
+        idPropertyName: "isColorful",
+      });
+      map.data.loadGeoJson("./GeoJson-Data-master/earthquakes.geojson");
+
+      map.data.setStyle((feature) => {
+        // earthquake circle
+        let mag = feature.getProperty("mag");
+        var circleMarker = {
+          path: google.maps.SymbolPath.CIRCLE,
+          fillColor: "red",
+          fillOpacity: 0.4,
+          scale: Math.pow(2, mag) / 2,
+          strokeColor: "white",
+          strokeWeight: 0.5,
+        };
+
+        // highlight states white when mouseover
+        if (feature.getProperty("isColorful")) {
+          var color = "white";
+          return {
+            fillColor: color,
+            icon: circleMarker
+          };
+        };
+        return {
+          icon: circleMarker
+        }
+      });
+
       // auto zoom after click one region
-      map.data.addListener("click", function (e) {
+      map.data.addListener("rightclick", (e) => {
+        var maker = new google.maps.Marker({
+          position: e.latLng,
+          map: map,
+        });
+      });
+
+      map.data.addListener("dblclick", function(e) {
         let bounds = new google.maps.LatLngBounds();
-    
+
         e.feature.getGeometry().forEachLatLng((x) => bounds.extend(x));
         map.fitBounds(bounds);
         map.panToBounds(bounds);
-    
-        // if (e.feature.getId()===1) {
-        //   console.log('VIC');
-        //   map.data.loadGeoJson("GeoJson-Data-master/melbourne.geojson");
-        //   console.log(map.data);
-        // }
-        // console.log(map.getZoom());
+
       });
-    
+
       map.data.addListener("mouseover", (e) => {
-        map.data.revertStyle();
-        map.data.overrideStyle(e.feature, { fillColor: "white" });
+        e.feature.setProperty("isColorful", true);
       });
-    
+
       map.data.addListener("mouseout", (e) => {
-        map.data.revertStyle();
+        e.feature.setProperty("isColorful", false);
       });
-    
+
       map.addListener("zoom_changed", () => {
-          console.log(map.getZoom());
+        //console.log(map.getZoom());
       });
-    }
+    },
+
   },
+
   mounted() {
     const googleMapApi = GoogleMapsApiLoader({
-      apiKey: 'AIzaSyDXG60896YH8pjO-svO4f7zQlxWBlZHp98',
-    }).then((google)=>{
+      apiKey: "AIzaSyDXG60896YH8pjO-svO4f7zQlxWBlZHp98",
+    }).then((google) => {
       this.google = googleMapApi;
       this.initMap();
-    })
-  }
+    });
+  },
 };
 </script>
 
 <style></style>
-
-
-<!--
-<template>
-  <div class="page-header clear-filter">
-    <div class="page-header-image" style="height:8%;background-color:black"></div>
-    <div class="content">
-      <div>
-        <div>
-          <h2>Search and add a pin</h2>
-          <label>
-            <gmap-autocomplete
-              @place_changed="setPlace">
-            </gmap-autocomplete>
-            <button @click="addMarker">Add</button>
-          </label>
-          <br/>
-        </div>
-        <br>
-        <gmap-map
-          :center="center"
-          :zoom="12"
-          style="width:100%;  height: 800px;"
-        >
-          <gmap-marker
-            :key="index"
-            v-for="(m, index) in markers"
-            :position="m.position"
-            @click="center=m.position"
-          ></gmap-marker>
-        </gmap-map>
-      </div>
-    </div>
-  </div>  
-</template>
-
-<script>
-export default {
-  name: "maps-page",
-  data() {
-    return {
-      // default to Montreal to keep it simple
-      // change this to whatever makes sense
-      center: { lat: 45.508, lng: -73.587 },
-      markers: [],
-      places: [],
-      currentPlace: null
-    };
-  },
-
-  mounted() {
-    this.geolocate();
-  },
-
-  methods: {
-    // receives a place object via the autocomplete component
-    setPlace(place) {
-      this.currentPlace = place;
-    },
-    addMarker() {
-      if (this.currentPlace) {
-        const marker = {
-          lat: this.currentPlace.geometry.location.lat(),
-          lng: this.currentPlace.geometry.location.lng()
-        };
-        this.markers.push({ position: marker });
-        this.places.push(this.currentPlace);
-        this.center = marker;
-        this.currentPlace = null;
-      }
-    },
-    geolocate: function() {
-      navigator.geolocation.getCurrentPosition(position => {
-        this.center = {
-          lat: position.coords.latitude,
-          lng: position.coords.longitude
-        };
-      });
-    }
-  }
-};
-</script>
-
-<style></style>
- -->
