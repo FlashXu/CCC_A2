@@ -1,0 +1,62 @@
+Name,Type,Title
+sa3_code16,String,SA3 Code
+females_age_0_4,Integer,Number of Females aged 0 - 4 years
+females_age_10_14,Integer,Number of Females aged 10 - 14 years
+females_age_15_19,Integer,Number of Females aged 15 - 19 years
+females_age_20_24,Integer,Number of Females aged 20 - 24 years
+females_age_25_29,Integer,Number of Females aged 25 - 29 years
+females_age_30_34,Integer,Number of Females aged 30 - 34 years
+females_age_35_39,Integer,Number of Females aged 35 - 39 years
+females_age_40_44,Integer,Number of Females aged 40 - 44 years
+females_age_45_49,Integer,Number of Females aged 45 - 49 years
+females_age_50_54,Integer,Number of Females aged 50 - 54 years
+females_age_55_59,Integer,Number of Females aged 55 - 59 years
+females_age_5_9,Integer,Number of Females aged 5 - 9 years
+females_age_60_64,Integer,Number of Females aged 60 - 64 years
+females_age_65_69,Integer,Number of Females aged 65 - 69 years
+females_age_70_74,Integer,Number of Females aged 70 - 74 years
+females_age_75_79,Integer,Number of Females aged 75 - 79 years
+females_age_80_84,Integer,Number of Females aged 80 - 84 years
+females_age_85_plus,Integer,Number of Females aged 85+ years
+females_total,Integer,Total Number of Females
+males_age_0_4,Integer,Number of Males aged 0 - 4 years
+males_age_10_14,Integer,Number of Males aged 10 - 14 years
+males_age_15_19,Integer,Number of Males aged 15 - 19 years
+males_age_20_24,Integer,Number of Males aged 20 - 24 years
+males_age_25_29,Integer,Number of Males aged 25 - 29 years
+males_age_30_34,Integer,Number of Males aged 30 - 34 years
+males_age_35_39,Integer,Number of Males aged 35 - 39 years
+males_age_40_44,Integer,Number of Males aged 40 - 44 years
+males_age_45_49,Integer,Number of Males aged 45 - 49 years
+males_age_50_54,Integer,Number of Males aged 50 - 54 years
+males_age_55_59,Integer,Number of Males aged 55 - 59 years
+males_age_5_9,Integer,Number of Males aged 5 - 9 years
+males_age_60_64,Integer,Number of Males aged 60 - 64 years
+males_age_65_69,Integer,Number of Males aged 65 - 69 years
+males_age_70_74,Integer,Number of Males aged 70 - 74 years
+males_age_75_79,Integer,Number of Males aged 75 - 79 years
+males_age_80_84,Integer,Number of Males aged 80 - 84 years
+males_age_85_plus,Integer,Number of Males aged 85+ years
+males_total,Integer,Total Number of Males
+persons_age_0_4,Integer,Number of Persons aged 0 - 4 years
+persons_age_10_14,Integer,Number of Persons aged 10 - 14 years
+persons_age_15_19,Integer,Number of Persons aged 15 - 19 years
+persons_age_20_24,Integer,Number of Persons aged 20 - 24 years
+persons_age_25_29,Integer,Number of Persons aged 25 - 29 years
+persons_age_30_34,Integer,Number of Persons aged 30 - 34 years
+persons_age_35_39,Integer,Number of Persons aged 35 - 39 years
+persons_age_40_44,Integer,Number of Persons aged 40 - 44 years
+persons_age_45_49,Integer,Number of Persons aged 45 - 49 years
+persons_age_50_54,Integer,Number of Persons aged 50 - 54 years
+persons_age_55_59,Integer,Number of Persons aged 55 - 59 years
+persons_age_5_9,Integer,Number of Persons aged 5 - 9 years
+persons_age_60_64,Integer,Number of Persons aged 60 - 64 years
+persons_age_65_69,Integer,Number of Persons aged 65 - 69 years
+persons_age_70_74,Integer,Number of Persons aged 70 - 74 years
+persons_age_75_79,Integer,Number of Persons aged 75 - 79 years
+persons_age_80_84,Integer,Number of Persons aged 80 - 84 years
+persons_age_85_plus,Integer,Number of Persons aged 85+ years
+persons_total,Integer,Total Number of People
+sa3_name16,String,SA3 Name
+state_code,String,State Code
+state_name,String,State Name
