@@ -274,7 +274,7 @@ export default {
         ],
       });
 
-      map.data.loadGeoJson("./GeoJson-Data-master/australian-states.json", {
+      map.data.loadGeoJson("./GeoJson-Data-master/SA3_2016_AUST_SIM.json", {
         idPropertyName: "isColorful",
       });
       map.data.loadGeoJson("./GeoJson-Data-master/earthquakes.geojson");
