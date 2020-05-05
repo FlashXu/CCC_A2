@@ -41,11 +41,15 @@ def main(chunk_size=500):
 
     zones = load_zones()
     while True:
-        docs = [add_zone(doc, zones) for doc in db.find(mango)]
-        if not docs:
-            break
-        result = db.update(docs)
-        print(f'{sum([r[0] for r in result])}/{len(docs)} updated.')
+        try:
+            docs = [add_zone(doc, zones) for doc in db.find(mango)]
+            if not docs:
+                time.sleep(20)
+            result = db.update(docs)
+            print(f'{sum([r[0] for r in result])}/{len(docs)} updated.')
+        except:
+            time.sleep(5)
+
 
 
 if __name__ == "__main__":
