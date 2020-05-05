@@ -1,1 +1,0 @@
-*/15 * * * * /usr/local/bin/python -u /workspace/expand_user.py > /workspace/expand.log 2>&1

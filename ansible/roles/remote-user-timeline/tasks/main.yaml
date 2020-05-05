@@ -9,16 +9,27 @@
     dest: '{{ tweet_dir }}'
   with_items:
     - utils.py
-    - stream_requirement.txt
-    - dig_user.py
-
-- name: install dependency
-  command:
-    chdir: /home/ubuntu/stream
-    cmd: pip3 install -r stream_requirement.txt
+    - requirement.txt
+    - tokens.py
+    - Dockerfile
+    - api_dig.py
   
-- name: add crontab
-  cron:
-    name: dig user
-    minute: '*/15'
-    job: /usr/bin/python3 /home/ubuntu/stream/dig_user.py > /home/ubuntu/stream/dig.log 2>&1
+- name: build Docker image
+  docker_image:
+    name: timeline
+    build:
+      path: '{{ tweet_dir }}'
+      pull: yes
+    source: build
+    tag: v2
+
+- name: start container
+  docker_container:
+    name: timeline
+    image: timeline:v2
+    # state: absent
+    restart: yes
+    env:
+      INDEX: '{{ groups["all"].index(inventory_hostname) }}'
+    volumes:
+      - '{{ tweet_dir }}:/workspace'

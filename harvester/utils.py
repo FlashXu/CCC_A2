@@ -4,6 +4,8 @@ import tweepy
 from datetime import datetime
 from tokens import credential
 from random import choice
+from itertools import islice
+from concurrent.futures import ThreadPoolExecutor
 import couchdb
 
 
@@ -37,6 +39,14 @@ def break_to_chunk(l, size=100):
     return [l[i:i + size] for i in range(0, len(l), size)]
 
 
+def split_every(iterable, chunk=100):
+    i = iter(iterable)
+    piece = list(islice(i, chunk))
+    while piece:
+        yield piece
+        piece = list(islice(i, chunk))
+
+
 # return a random authorized twitter api if did not specify accurate token info
 def api(index=None, wait_on_rate_limit=True, wait_on_rate_limit_notify=True, token=None):
     if index:
@@ -44,9 +54,9 @@ def api(index=None, wait_on_rate_limit=True, wait_on_rate_limit_notify=True, tok
     elif not token:
         token = choice(credential)
     auth = tweepy.OAuthHandler(token['consumer_key'],
-                                token['consumer_secret'])
+                               token['consumer_secret'])
     auth.set_access_token(token['access_token_key'],
-                            token['access_token_secret'])
+                          token['access_token_secret'])
     return tweepy.API(auth, wait_on_rate_limit=wait_on_rate_limit, wait_on_rate_limit_notify=wait_on_rate_limit_notify)
 
 
@@ -116,7 +126,7 @@ def parse_user(raw_user, level):
 
     activity = user['followers_count'] + user['friends_count']
 
-    return None if activity < 400 or activity > 5000 else user
+    return None if activity < 400 or activity > 5000 or raw_user['protected'] else user
 
 
 def batch_update_by_username(db, names, **args):
@@ -125,14 +135,34 @@ def batch_update_by_username(db, names, **args):
     for doc in docs:
         for k, v in args.items():
             doc[k] = v
-
-    result = db.update(docs)
-    for r in result:
-        print(r)
+    return db.update(docs)
+    # result = db.update(docs)
+    # for r in result:
+    #     print(r)
 
 
 def update_by_username(db, name, **args):
     doc = db.view('user_tree/by_name', key=name, include_docs=True).rows[0].doc
+    for k, v in args.items():
+        doc[k] = v
+    db.save(doc)
+
+
+def batch_update_by_id(db, ids, chunk_size=1500, **args):
+    success = 0
+    for chunk in split_every(ids, chunk_size):
+        docs = [r.doc for r in db.view(
+            '_all_docs', keys=chunk, include_docs=True)]
+        for doc in docs:
+            for k, v in args.items():
+                doc[k] = v
+        result = db.update(docs)
+        success += sum([r[0] for r in result])
+        print(f'{success}/{len(ids)} updated.')
+
+
+def update_by_id(db, id, **args):
+    doc = db.view('_all_docs', key=id, include_docs=True).rows[0].doc
     for k, v in args.items():
         doc[k] = v
     db.save(doc)
