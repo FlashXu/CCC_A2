@@ -55,7 +55,7 @@ def expand(n):
 
         except Exception as e:
             print(repr(e))
-            if 'Not authorized' in str(e):
+            if 'Not authorized' in str(e) or 'does not exist' in str(e):
                 user['expanded'] = repr(e)
                 db.save(user)
             else:

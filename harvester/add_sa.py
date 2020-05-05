@@ -26,8 +26,8 @@ def add_zone(doc, zones):
     return doc
 
 
-def main():
-    
+def main(chunk_size=500):
+
     db = utils.db(url='172.26.131.114:5984')
     mango = {
         'selector': {
@@ -36,13 +36,12 @@ def main():
         },
         'use_index': 'tweet-geo-index',
         # 'fields': ['_id', '_rev', 'geo'],
-        'limit': 2000
+        'limit': chunk_size
     }
 
     zones = load_zones()
     while True:
         docs = [add_zone(doc, zones) for doc in db.find(mango)]
-        print(len(docs))
         if not docs:
             break
         result = db.update(docs)
