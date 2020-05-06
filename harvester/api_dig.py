@@ -54,11 +54,13 @@ def search(n, max_tweet=300):
             user['searched'] = True
             db.save(user)
         except Exception as e:
-            if 'Not authorized' in str(e):
-                user['searched'] = repr(e)
-                db.save(user)
-            else:
-                q.put(user)
+            user['searched'] = repr(e)
+            db.save(user)
+            # if 'Not authorized' in str(e):
+            #     user['searched'] = repr(e)
+            #     db.save(user)
+            # else:
+            #     q.put(user)
             
 
 

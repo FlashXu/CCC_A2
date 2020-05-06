@@ -1,5 +1,5 @@
-- hosts: dig
-#   become: yes
+- hosts: all
+  become: yes
   gather_subset: min
 
   vars_files:
@@ -7,4 +7,5 @@
 
   roles:
     # - role: remote-common
+    # - role: remote-install-docker
     - role: remote-user-timeline

@@ -69,7 +69,7 @@ def bulk_parse_tweet(raw_tweets, blacklist=['googuns_lulz', 'object82']):
 
 
 def parse_tweet(raw_tweet, blacklist=['googuns_lulz', 'object82']):
-    if not (raw_tweet['place'] and raw_tweet['place']['country_code'] == 'AU'):
+    if not (raw_tweet.get('place') and raw_tweet['place']['country_code'] == 'AU'):
         return
 
     data = {}
