@@ -1,0 +1,73 @@
+Name,Type,Title
+yr,String,Year
+sa3_code16,String,SA3 Code 2016
+eq_t_hs_inc_fam_lone_grp_hslds_med_eq_t_hs_inc_wk_aud,Integer,"Equivalised Total Household Income - Family, Lone Person And Group Households Median Equivalised Total Household Income (Weekly) $"
+est_p_inc_avg_emply_inc_aud,Integer,Estimates Of Personal Income Mean Employee Income $
+est_p_inc_avg_investment_inc_aud,Integer,Estimates Of Personal Income Mean Investment Income $
+est_p_inc_avg_own_unincorportd_bsns_inc_aud,Integer,Estimates Of Personal Income Mean Own Unincorporated Business Income $
+est_p_inc_avg_super_annuity_inc_aud,Integer,Estimates Of Personal Income Mean Superannuation And Annuity Income $
+est_p_inc_avg_tot_inc_excl_gov_pnsn_aud,Integer,Estimates Of Personal Income Mean Total Income (Excl. Government Pensions) $
+est_p_inc_emply_inc_med_age_yrs,Integer,Estimates Of Personal Income Employee Income Earners - Median Age  Years
+est_p_inc_emply_inc_mn_src_inc_pr100,Integer,Estimates Of Personal Income Employee Income As Main Source Of Income %
+est_p_inc_emply_inc_num,Integer,Estimates Of Personal Income Employee Income Earners No.
+est_p_inc_investment_inc_med_age_yrs,Integer,Estimates Of Personal Income Investment Income Earners - Median Age Years
+est_p_inc_investment_inc_mn_src_inc_pr100,Double,Estimates Of Personal Income Investment Income As Main Source Of Income %
+est_p_inc_investment_inc_num,Integer,Estimates Of Personal Income Investment Income Earners No.
+est_p_inc_med_emply_inc_aud,Integer,Estimates Of Personal Income Median Employee Income $
+est_p_inc_med_investment_inc_aud,Integer,Estimates Of Personal Income Median Investment Income $
+est_p_inc_med_own_unincorportd_bsns_inc_aud,Integer,Estimates Of Personal Income Median Own Unincorporated Business Income $
+est_p_inc_med_super_annuity_inc_aud,Integer,Estimates Of Personal Income Median Superannuation And Annuity Income $
+est_p_inc_med_tot_inc_excl_gov_pnsn_aud,Integer,Estimates Of Personal Income Median Total Income (Excl. Government Pensions) $
+est_p_inc_own_unincorportd_bsns_inc_med_age_yrs,Integer,Estimates Of Personal Income Own Unincorporated Business Income Earners - Median Age  Years
+est_p_inc_own_unincorportd_bsns_inc_mn_src_inc_pr100,Double,Estimates Of Personal Income Own Unincorporated Business Income As Main Source Of Income  %
+est_p_inc_own_unincorportd_bsns_inc_num,Integer,Estimates Of Personal Income Own Unincorporated Business Income Earners No.
+est_p_inc_super_annuity_inc_med_age_yrs,Integer,Estimates Of Personal Income Superannuation And Annuity Income Earners - Median Age Years
+est_p_inc_super_annuity_inc_mn_src_inc_pr100,Double,Estimates Of Personal Income Superannuation And Annuity Income As Main Source Of Income %
+est_p_inc_super_annuity_inc_num,Integer,Estimates Of Personal Income Superannuation And Annuity Income Earners No.
+est_p_inc_tot_emply_inc_aud,Integer,Estimates Of Personal Income Total Employee Income $
+est_p_inc_tot_inc_excl_gov_pnsn_alwn_gini_coefficient_num,Double,Estimates Of Personal Income Total Income (Excl. Government Pensions And Allowances) - Gini Coefficient No.
+est_p_inc_tot_inc_excl_gov_pnsn_alwn_hi_quartile_pr100,Double,Estimates Of Personal Income Total Income (Excl. Government Pensions And Allowances) - Highest Quartile %
+est_p_inc_tot_inc_excl_gov_pnsn_alwn_inc_share_top_10_pr100,Double,Estimates Of Personal Income Total Income (Excl. Government Pensions And Allowances) - Income Share Of Top 10% Of Earners %
+est_p_inc_tot_inc_excl_gov_pnsn_alwn_inc_share_top_1_pr100,Double,Estimates Of Personal Income Total Income (Excl. Government Pensions And Allowances) - Income Share Of Top 1% Of Earners %
+est_p_inc_tot_inc_excl_gov_pnsn_alwn_inc_share_top_5_pr100,Double,Estimates Of Personal Income Total Income (Excl. Government Pensions And Allowances) - Income Share Of Top 5% Of Earners %
+est_p_inc_tot_inc_excl_gov_pnsn_alwn_loest_quartile_pr100,Double,Estimates Of Personal Income Total Income (Excl. Government Pensions And Allowances) - Lowest Quartile %
+est_p_inc_tot_inc_excl_gov_pnsn_alwn_med_age_yrs,Integer,Estimates Of Personal Income Total Income Earners (Excl. Government Pensions And Allowances) - Median Age Years
+est_p_inc_tot_inc_excl_gov_pnsn_alwn_p10_p50_ratio,Double,Estimates Of Personal Income Total Income (Excl. Government Pensions And Allowances) - P10/P50  Ratio
+est_p_inc_tot_inc_excl_gov_pnsn_alwn_p20_p50_ratio,Double,Estimates Of Personal Income Total Income (Excl. Government Pensions And Allowances) - P20/P50  Ratio
+est_p_inc_tot_inc_excl_gov_pnsn_alwn_p80_p20_ratio,Double,Estimates Of Personal Income Total Income (Excl. Government Pensions And Allowances) - P80/P20 Ratio
+est_p_inc_tot_inc_excl_gov_pnsn_alwn_p80_p50_ratio,Double,Estimates Of Personal Income Total Income (Excl. Government Pensions And Allowances) - P80/P50 Ratio
+est_p_inc_tot_inc_excl_gov_pnsn_alwn_second_quartile_pr100,Double,Estimates Of Personal Income Total Income (Excl. Government Pensions And Allowances) - Second Quartile %
+est_p_inc_tot_inc_excl_gov_pnsn_alwn_third_quartile_pr100,Double,Estimates Of Personal Income Total Income (Excl. Government Pensions And Allowances) - Third Quartile %
+est_p_inc_tot_inc_excl_gov_pnsn_aud,Integer,Estimates Of Personal Income Total Income (Excl. Government Pensions) $
+est_p_inc_tot_inc_excl_gov_pnsn_num,Integer,Estimates Of Personal Income  Total Income Earners (Excl. Government Pensions) No.
+est_p_inc_tot_investment_inc_aud,Integer,Estimates Of Personal Income Total Investment Income $
+est_p_inc_tot_own_unincorportd_bsns_inc_aud,Integer,Estimates Of Personal Income Total Own Unincorporated Business Income $
+est_p_inc_tot_super_annuity_inc_aud,Integer,Estimates Of Personal Income Total Superannuation And Annuity Income $
+gcg_rptd_by_taxpayers_gcg_amount_audm,Double,Gross Capital Gains Reported By Taxpayers Gross Capital Gains - Amount  $M
+gcg_rptd_by_taxpayers_gcg_avg_aud,Integer,Gross Capital Gains Reported By Taxpayers Gross Capital Gains - Mean $
+gcg_rptd_by_taxpayers_gcg_med_aud,Integer,Gross Capital Gains Reported By Taxpayers Gross Capital Gains - Median $
+gcg_rptd_by_taxpayers_gcg_p_num,Integer,Gross Capital Gains Reported By Taxpayers Gross Capital Gains - Persons No.
+ogc_fid,Integer,Unique Identifier
+sa3_name16,String,SA3 Name 2016
+slct_gov_pnsn_alwn_age_pension_centrelink_num,Integer,Selected Government Pensions & Allowances Age Pension - Centrelink No.
+slct_gov_pnsn_alwn_age_pension_dva_num,Integer,Selected Government Pensions & Allowances Age Pension - Dva No.
+slct_gov_pnsn_alwn_carer_alloance_num,Integer,Selected Government Pensions & Allowances Carer Allowance No.
+slct_gov_pnsn_alwn_carer_payment_num,Integer,Selected Government Pensions & Allowances Carer Payment No.
+slct_gov_pnsn_alwn_commonwealth_rent_asst_num,Integer,Selected Government Pensions & Allowances Commonwealth Rent Assistance No.
+slct_gov_pnsn_alwn_dsblty_supp_pension_num,Integer,Selected Government Pensions & Allowances Disability Support Pension No.
+slct_gov_pnsn_alwn_fam_tax_bft_b_num,Integer,Selected Government Pensions & Allowances Family Tax Benefit B No.
+slct_gov_pnsn_alwn_fam_tax_bft_num,Integer,Selected Government Pensions & Allowances Family Tax Benefit A No.
+slct_gov_pnsn_alwn_inc_supp_supplement_dva_num,Integer,Selected Government Pensions & Allowances Income Support Supplement - Dva No.
+slct_gov_pnsn_alwn_newstart_alloance_num,Integer,Selected Government Pensions & Allowances Newstart Allowance No.
+slct_gov_pnsn_alwn_pension_dva_num,Integer,Selected Government Pensions & Allowances Service Pension - Dva No.
+slct_gov_pnsn_alwn_prnting_payment_prtred_num,Integer,Selected Government Pensions & Allowances Parenting Payment - Partnered No.
+slct_gov_pnsn_alwn_prnting_payment_single_num,Integer,Selected Government Pensions & Allowances Parenting Payment - Single No.
+slct_gov_pnsn_alwn_yth_alloance_full_time_studts_aprtc_num,Integer,Selected Government Pensions & Allowances Youth Allowance (Full Time Students/Apprentices) No.
+slct_gov_pnsn_alwn_yth_alloance_oth_num,Integer,Selected Government Pensions & Allowances Youth Allowance (Other) No.
+tot_p_inc_wk_p_ov_15_yrs_p_earn_aud1000_aud1999wk_pr100,Double,Total Personal Income (Weekly) - Persons Over 15 Years Persons Earning $1000-$1999 Per Week %
+tot_p_inc_wk_p_ov_15_yrs_p_earn_aud1_aud499wk_pr100,Double,Total Personal Income (Weekly) - Persons Over 15 Years Persons Earning $1-$499 Per Week %
+tot_p_inc_wk_p_ov_15_yrs_p_earn_aud2000_aud2999wk_pr100,Double,Total Personal Income (Weekly) - Persons Over 15 Years Persons Earning $2000-$2999 Per Week %
+tot_p_inc_wk_p_ov_15_yrs_p_earn_aud3000_plswk_pr100,Double,Total Personal Income (Weekly) - Persons Over 15 Years Persons Earning $3000 Or More Per Week %
+tot_p_inc_wk_p_ov_15_yrs_p_earn_aud500_aud999wk_pr100,Double,Total Personal Income (Weekly) - Persons Over 15 Years Persons Earning $500-$999 Per Week %
+tot_p_inc_wk_p_ov_15_yrs_p_earn_nil_inc_pr100,Double,Total Personal Income (Weekly) - Persons Over 15 Years Persons Earning Nil Income %
+tot_p_inc_wk_p_ov_15_yrs_p_negative_inc_pr100,Double,Total Personal Income (Weekly) - Persons Over 15 Years Persons With A Negative Income %
