@@ -1,8 +1,5 @@
 <template>
   <div>
-    <!-- <div class="page-header clear-filter">
-      <div class="page-header-image" style="height:8%;background-color:black"></div>
-    </div> -->
     <div id="gmap" style="width: 100%; height: 1000px;"></div>
   </div>
 </template>
@@ -17,9 +14,18 @@ export default {
 
   methods: {
     initMap: () => {
-      // Styles a map in night mode.
+      var AUSSIE_BOUNDS = {
+        north: -10,
+        south: -44,
+        west: 97,
+        east: -188,
+      };
       var map = new google.maps.Map(document.getElementById("gmap"), {
         center: { lat: -25, lng: 130 },
+        restriction: {
+          latLngBounds: AUSSIE_BOUNDS,
+          strictBounds: false,
+        },
         zoom: 4,
         disableDefaultUI: true,
         disableDoubleClickZoom: true,
@@ -284,7 +290,7 @@ export default {
         let mag = feature.getProperty("mag");
         var circleMarker = {
           path: google.maps.SymbolPath.CIRCLE,
-          fillColor: "red",
+          fillColor: "blue",
           fillOpacity: 0.4,
           scale: Math.pow(2, mag) / 2,
           strokeColor: "white",
@@ -333,7 +339,6 @@ export default {
         //console.log(map.getZoom());
       });
     },
-
   },
 
   mounted() {
