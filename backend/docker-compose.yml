@@ -9,5 +9,8 @@ services:
       - .:/code
     depends_on:
       - redis
+    logging:
+      options:
+          max-size: 10m
   redis:
     image: redis:alpine
