@@ -11,7 +11,7 @@ export default {
   name: "maps-page",
   bodyClass: "maps-page",
   methods: {
-    initMap: () => {
+    initMap: function() {
       // Styles a map in night mode.
       var AUSSIE_BOUNDS = {
         north: -10,
@@ -189,11 +189,62 @@ export default {
           },
         ],
       });
-      map.data.loadGeoJson("./GeoJson-Data-master/SA3_2016_AUST_SIM.json", {
+
+      let mapLayer = this.loadMapLayer(map);
+      let earthquakeLayer = this.loadEarthquakeLayer();
+      // adding layers into map
+      mapLayer.setMap(map);
+      earthquakeLayer.setMap(map);
+    },
+
+    loadMapLayer: function(map) {
+      let mapLayer = new google.maps.Data();
+      mapLayer.loadGeoJson("./GeoJson-Data-master/SA3_2016_AUST_SIM.json", {
         idPropertyName: "isColorful",
       });
-      map.data.loadGeoJson("./GeoJson-Data-master/earthquakes.geojson");
-      map.data.setStyle((feature) => {
+      mapLayer.setStyle((feature) => {
+        if (feature.getProperty("isColorful")) {
+          let color = "yellow";
+          return {
+            fillColor: color,
+            strokeOpacity: 2,
+          };
+        } else {
+          return {
+            //strokeOpacity:0,
+            fillOpacity: 0,
+            strokeWeight: 0.1,
+          };
+        }
+      });
+
+      // auto zoom after click one region
+      mapLayer.addListener("rightclick", (e) => {
+        var maker = new google.maps.Marker({
+          position: e.latLng,
+          map: map,
+        });
+      });
+      mapLayer.addListener("dblclick", function(e) {
+        let bounds = new google.maps.LatLngBounds();
+        e.feature.getGeometry().forEachLatLng((x) => bounds.extend(x));
+        map.fitBounds(bounds);
+        map.panToBounds(bounds);
+      });
+      mapLayer.addListener("mouseover", (e) => {
+        e.feature.setProperty("isColorful", true);
+      });
+      mapLayer.addListener("mouseout", (e) => {
+        e.feature.setProperty("isColorful", false);
+      });
+
+      return mapLayer;
+    },
+
+    loadEarthquakeLayer: function() {
+      let earthquakeLayer = new google.maps.Data();
+      earthquakeLayer.loadGeoJson("./GeoJson-Data-master/earthquakes.geojson");
+      earthquakeLayer.setStyle((feature) => {
         // earthquake circle
         let mag = feature.getProperty("mag");
         var circleMarker = {
@@ -205,45 +256,11 @@ export default {
           strokeWeight: 0.5,
         };
         // highlight states white when mouseover
-        if (feature.getProperty("isColorful")) {
-          var color = "yellow";
-          return {
-            fillColor: color,
-            icon: circleMarker,
-            strokeOpacity: 2,
-          };
-        } else {
-          // no effect
-          return {
-            icon: circleMarker,
-            //strokeOpacity:0,
-            fillOpacity: 0,
-            strokeWeight: 0.1,
-          };
-        }
+        return {
+          icon: circleMarker,
+        };
       });
-      // auto zoom after click one region
-      map.data.addListener("rightclick", (e) => {
-        var maker = new google.maps.Marker({
-          position: e.latLng,
-          map: map,
-        });
-      });
-      map.data.addListener("dblclick", function(e) {
-        let bounds = new google.maps.LatLngBounds();
-        e.feature.getGeometry().forEachLatLng((x) => bounds.extend(x));
-        map.fitBounds(bounds);
-        map.panToBounds(bounds);
-      });
-      map.data.addListener("mouseover", (e) => {
-        e.feature.setProperty("isColorful", true);
-      });
-      map.data.addListener("mouseout", (e) => {
-        e.feature.setProperty("isColorful", false);
-      });
-      map.addListener("zoom_changed", () => {
-        //console.log(map.getZoom());
-      });
+      return earthquakeLayer;
     },
   },
   mounted() {
