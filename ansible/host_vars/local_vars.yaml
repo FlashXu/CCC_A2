@@ -15,9 +15,11 @@ common_security_groups:
 #   Security Groups
 security_groups:
   - name: couchdb
-    description: Allow CouchDB (port 5984) from world and (port 4369, 9100-9102) for internal network
+    description: Allow CouchDB (port 5984) from world and (port 4369, 9100) for internal network
   - name: frp
     description: Allow frp (port 7000) from world
+  - name: backend
+    description: Allow flask (port 5000) from world
 
 
 #   Security Group Rules
@@ -31,6 +33,11 @@ security_rules_ip_prefix:
     protocol: tcp
     port_range_min: 7000
     port_range_max: 7000
+    remote_ip_prefix: 0.0.0.0/0
+  - name: backend
+    protocol: tcp
+    port_range_min: 5000
+    port_range_max: 5000
     remote_ip_prefix: 0.0.0.0/0
 
 security_rules_group:
@@ -67,8 +74,8 @@ instances:
       size: 80
 
   - name: instance4
-    security_groups: []
-      # - couchdb
+    security_groups: 
+      - backend
     volume:
       name: volume4
       size: 10
