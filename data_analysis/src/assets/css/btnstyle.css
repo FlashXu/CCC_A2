@@ -1,0 +1,85 @@
+.search {
+  width: 80%;
+  position: relative;
+  display: flex;
+}
+
+.searchTerm {
+  width: 30%;
+  border: 3px solid #00B4CC;
+  padding: 5px;
+  height: 20px;
+  border-radius: 5px 0 0 5px;
+  outline: none;
+  color: #9DBFAF;
+}
+
+.searchTerm:focus{
+  color: #00B4CC;
+}
+
+.searchButton {
+  width: 80px;
+  height: 36px;
+  outline: none;
+  border: 1px solid #00B4CC;
+  background: #00B4CC;
+  text-align: center;
+  color: #fff;
+  border-radius: 0 5px 5px 0;
+  cursor: pointer;
+  font-size: 20px;
+}
+
+
+.linechartBtn {
+  width: 60px;
+  height: 32px;
+  outline: none;
+  border: 3px solid rgb(245, 189, 106);
+  background: #00B4CC;
+  text-align: center;
+  color: #fff;
+  border-radius: 4em;
+  cursor: pointer;
+  font-size: 20px;
+}
+
+.piechartBtn {
+  width: 60px;
+  height: 30px;
+  outline: none;
+  border: 3px solid rgb(245, 189, 106);
+  background: #00B4CC;
+  text-align: center;
+  color: #fff;
+  border-radius: 4em;
+  cursor: pointer;
+  font-size: 20px;
+}
+
+.barchartBtn {
+  width: 60px;
+  height: 30px;
+  outline: none;
+  border: 3px solid rgb(245, 189, 106);
+  background: #00B4CC;
+  text-align: center;
+  color: #fff;
+  border-radius: 4em;
+  cursor: pointer;
+  font-size: 20px;
+}
+
+.radarchartBtn {
+  width: 80px;
+  height: 30px;
+  outline: none;
+  border: 3px solid rgb(245, 189, 106);
+  background: #00B4CC;
+  text-align: center;
+  color: #fff;
+  border-radius: 4em;
+  cursor: pointer;
+  font-size: 20px;
+}

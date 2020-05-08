@@ -22,7 +22,5 @@ def read_metadata(filepath, genfile_path):
         writer.writerow(line_list)
     c.close()
 
-
-
 read_metadata("metadataSA3_Melb_Income.json", "Income_Attributes.csv")
 read_metadata("metadataSA3_Melb_Population.json", "Population_Attributes.csv")
