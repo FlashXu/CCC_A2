@@ -6,6 +6,7 @@ from time import sleep
 from threading import Thread
 from utils import RedisQueue
 import logging
+import json
 
 
 bp = Blueprint('db', __name__)
@@ -44,7 +45,7 @@ def on_startup():
 def on_exit():
     users = []
     while not q.empty():
-        user = q.get()
+        user = json.loads(q.get())
         user['searched'] = False
         users.append(user)
     db.update(users)

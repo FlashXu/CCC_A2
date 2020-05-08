@@ -43,14 +43,6 @@ class RedisQueue(object):
         if isinstance(item, tuple):
             item = item[1]
 
-        if item:
-            item = item.decode()
-
-        try:
-            item = json.loads(item)
-        except:
-            pass
-
         return item
 
     def get_nowait(self):
