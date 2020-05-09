@@ -19,10 +19,14 @@ import Vue from 'vue';
 import App from './App.vue';
 import router from './router';
 import NowUiKit from './plugins/now-ui-kit';
+import BootstrapVue from 'bootstrap-vue'
+import 'bootstrap/dist/css/bootstrap.css';
+import 'bootstrap-vue/dist/bootstrap-vue.css';
 
 Vue.config.productionTip = false;
 
 Vue.use(NowUiKit);
+Vue.use(BootstrapVue);
 
 new Vue({
   el: '#app',
