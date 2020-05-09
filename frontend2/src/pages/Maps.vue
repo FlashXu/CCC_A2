@@ -386,7 +386,7 @@ export default {
     border: 0px solid grey;
     float: left;
     width: 40%;
-    background: #f1f1f1;
+    background: black;
     margin-left: -29px;
   }
 
@@ -394,8 +394,8 @@ export default {
     float: left;
     width: 15%;
     padding: 10px;
-    background: white;
-    color: black;
+    background: black;
+    color: white;
     font-size: 9.5px;
     border: 0px solid grey;
     border-left: none;
@@ -403,8 +403,8 @@ export default {
   }
 
   form.example button:hover {
-    background:rgb(40, 40, 40);
-    color: white;
+    background:white;
+    color: black;
   }
 
   form.example::after {
