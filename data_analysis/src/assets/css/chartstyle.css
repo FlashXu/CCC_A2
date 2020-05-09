@@ -1,0 +1,56 @@
+/* linechart */
+.linechart {
+  width: 500px;
+  height: 300px;
+  background-color: #fff;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 20px 20px;
+  position: relative;
+  z-index: 1;
+  bottom: -10%;
+  left: 0%;
+}
+/* piechart */
+.piechart {
+  width: 500px;
+  height: 300px;
+  background-color: #fff;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 20px 20px;
+  position: relative;
+  z-index: 1;
+  bottom: -10%;
+  left: 0%;
+}
+/* barchart */
+.barchart {
+  width: 500px;
+  height: 300px;
+  background-color: #fff;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 20px 20px;
+  position: relative;
+  z-index: 1;
+  bottom: -10%;
+  left: 0%;
+}
+/* barchart */
+.radarchart {
+  width: 600px;
+  height: 300px;
+  background-color: #fff;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 20px 20px;
+  position: relative;
+  z-index: 1;
+  bottom: -10%;
+  left: 0%;
+}
