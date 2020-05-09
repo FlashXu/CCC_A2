@@ -11,9 +11,8 @@ from queue import Queue
 def acquire_user():
     while not stop.isSet():
         if q.qsize() <= worker_size:
-            magic_skip = randrange(2 * q.maxsize)
             rows = db.view('user_tree/expand', limit=worker_size, reduce=False, sorted=False,
-                           skip=magic_skip, startkey=[False], endkey=[False, {}], include_docs=True).rows
+                           startkey=[False], endkey=[False, {}], include_docs=True).rows
             users = []
             for row in rows:
                 user = row.doc

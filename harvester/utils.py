@@ -126,7 +126,12 @@ def parse_user(raw_user, level):
 
     activity = user['followers_count'] + user['friends_count']
 
-    return None if activity < 400 or activity > 5000 or raw_user['protected'] else user
+    return None if \
+        activity < 400 or \
+        activity > 5000 or \
+        raw_user['protected'] or \
+        user['statuses_count'] > 100000 \
+        else user
 
 
 def batch_update_by_username(db, names, **args):

@@ -16,4 +16,7 @@ services:
       - COUCHDB_SECRET={{ cluster_cookie }}
       - NODENAME={{ ansible_default_ipv4.address }}
       - ERL_FLAGS=-setcookie {{ cluster_cookie }}
+    logging:
+      options:
+          max-size: 20m
     container_name: couchdb

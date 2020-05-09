@@ -14,7 +14,6 @@ def get_zone(geo, zones):
 
 
 def load_zones(file='SA2'):
-    file = 'SA2'
     raw = ujson.load(open(f'../aurin/{file}.json'))
     return {zone['properties']['feature_code']: shape(
         zone['geometry']) for zone in raw['features']}
@@ -29,27 +28,21 @@ def add_zone(doc, zones):
 def main(chunk_size=500):
 
     db = utils.db(url='172.26.131.114:5984')
-    mango = {
-        'selector': {
-            'geo': {'$exists': True},
-            'zone': {'$exists': False}
-        },
-        'use_index': 'tweet-geo-index',
-        # 'fields': ['_id', '_rev', 'geo'],
-        'limit': chunk_size
-    }
+    # db = utils.db(url='45.88.195.224:9001')
 
     zones = load_zones()
     while True:
         try:
-            docs = [add_zone(doc, zones) for doc in db.find(mango)]
+            rows = db.view('process/SA', include_docs=True,
+                           reduce=False, limit=200, skip=400)
+            print(f'Get {len(rows)} data...')
+            docs = [add_zone(row.doc, zones) for row in rows]
             if not docs:
                 time.sleep(20)
             result = db.update(docs)
             print(f'{sum([r[0] for r in result])}/{len(docs)} updated.')
         except:
             time.sleep(5)
-
 
 
 if __name__ == "__main__":
