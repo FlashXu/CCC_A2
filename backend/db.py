@@ -21,26 +21,30 @@ def udb(name='user', url='172.26.131.114:5984', username='admin', password='admi
 def on_startup():
     def acquire_user(threshold=400):
         while True:
-            if q.qsize() < threshold:
-                rows = db.view('tree/searched', limit=threshold, reduce=False,
-                               include_docs=True)[[False]:[False, {}]].rows
-                users = []
-                for row in rows:
-                    user = row.doc
-                    user['searched'] = 'queue'
-                    users.append(user)
+            try:
+                if q.qsize() < threshold:
+                    rows = db.view('tree/searched', limit=threshold, reduce=False,
+                                   include_docs=True)[[False]:[False, {}]].rows
+                    users = []
+                    for row in rows:
+                        user = row.doc
+                        user['searched'] = 'queue'
+                        users.append(user)
 
-                if users:   # wait for 5 seconds to next fetch
-                    results = db.update(users)
-                    logging.warning(
-                        f'Put {sum([r[0] for r in results])} into queue ...')
-                    for user, (suc, uid, rev) in zip(users, results):
-                        if suc:
-                            user['_rev'] = rev
-                            q.put(user)
+                    if users:   # wait for 5 seconds to next fetch
+                        results = db.update(users)
+                        logging.warning(
+                            f'Put {sum([r[0] for r in results])} into queue ...')
+                        for user, (suc, uid, rev) in zip(users, results):
+                            if suc:
+                                user['_rev'] = rev
+                                q.put(user)
+                    else:
+                        sleep(5)
                 else:
-                    sleep(5)
-            else:
+                    sleep(1)
+            except Exception as e:
+                logging.error(repr(e))
                 sleep(1)
 
     Thread(target=acquire_user, daemon=True).start()
