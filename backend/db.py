@@ -75,7 +75,8 @@ def monitor():
 
 @bp.route('/next_search')
 def next_search():
-    return q.get()
+    user = q.get_nowait()
+    return user if user else {}
 
 
 @bp.route('/queue')
