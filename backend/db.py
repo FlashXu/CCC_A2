@@ -29,6 +29,10 @@ def on_startup():
                     user = row.doc
                     user['searched'] = 'queue'
                     users.append(user)
+
+                if not users:   # wait for 5 seconds to next fetch
+                    sleep(5)
+
                 results = db.update(users)
                 logging.warning(
                     f'Put {sum([r[0] for r in results])} into queue ...')

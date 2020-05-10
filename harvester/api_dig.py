@@ -20,7 +20,7 @@ def acquire_user():
 def user_tweets(api, uid, max_tweet=100000, max_id=None, min_date=datetime(2014, 1, 1)):
     while max_tweet > 0:
         status = api.user_timeline(
-            user_id=uid[2:], count=200, max_id=max_id)
+            user_id=uid, count=200, max_id=max_id)
         if not status:
             break
         # yield from status[:max_tweet]
@@ -32,7 +32,7 @@ def user_tweets(api, uid, max_tweet=100000, max_id=None, min_date=datetime(2014,
 
 
 class Counter:
-    def __init__(self, threshold=4.5):
+    def __init__(self, threshold=3):
         self.round = 0
         self.geo = 0
         self.total = 0
@@ -60,29 +60,31 @@ def search(n):
             # skip this user if the geo rate is less than threshold
             counter = Counter()
             for statuses in utils.split_every(user_tweets(api, user['_id']), 100):
-                parsed_data = utils.bulk_parse_tweet(statuses)
+                parsed_data = utils.bulk_parse_tweet(
+                    [s._json for s in statuses])
                 result = db.update(parsed_data)
                 success = sum([r[0] for r in result])
 
                 counter.update(len(parsed_data), len(statuses))
 
-                print(
-                    f'Key {n:3} {user["_id"]:21} :  Place {len(parsed_data):2}/{len(statuses):3}  Upload {success:2}  Rate {counter.rate():4.1f}%')
+                info = f'Key {n:3} {user["_id"]:21} :  Place {len(parsed_data):2}/{len(statuses):3}  Upload {success:2}  Rate {counter.rate():4.1f}%'
 
                 if counter.abort():
-                    print(
-                        f'Key {n:3} {user["_id"]:21} :  Geo rate {counter.rate():.2f}%  Abort...')
+                    print(f'{info}  Abort...')
                     break
+                else:
+                    print(info)
 
             user['searched'] = True
         except Exception as e:
             msg = str(e)
+            print(user, msg)
             if any([m in msg for m in ['Max retries exceeded', 'Connection']]):
                 user['searched'] = False
             else:
                 user['searched'] = msg
         finally:
-            db.update([user])
+            udb.update([user])
 
 
 def main(worker_size):
@@ -119,6 +121,7 @@ if __name__ == "__main__":
     db_ip = '172.26.131.114:5984'
 
     db = utils.db(url=db_ip)
+    udb = utils.db(name='user', url=db_ip)
 
     stop = Event()
     main(worker_size)
