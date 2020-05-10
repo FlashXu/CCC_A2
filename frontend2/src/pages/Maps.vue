@@ -9,16 +9,22 @@
         <div class="glass">
           <div>
             <b-dropdown id="dropdown-1" text="Aurin Data" class="m-md-2">
-              <b-dropdown-item >Age</b-dropdown-item>
-              <b-dropdown-item >Salary</b-dropdown-item>
-              <b-dropdown-item >Other languages</b-dropdown-item>
+              <b-dropdown-item>Age</b-dropdown-item>
+              <b-dropdown-item>Salary</b-dropdown-item>
+              <b-dropdown-item>Other languages</b-dropdown-item>
+              <b-dropdown-item @click="displayIncome">Income</b-dropdown-item>
+              <b-dropdown-item @click="displayPopulation">Population</b-dropdown-item>
+              <b-dropdown-item v-on:click="zoomToMelb">Melbourne</b-dropdown-item>
             </b-dropdown>
 
             <form class="example" style="margin:auto;max-width:300px">
-              <input type="text" placeholder="Track user by ID.." name="search2">
+              <input
+                type="text"
+                placeholder="Track user by ID.."
+                name="search2"
+              />
               <button type="submit">Go</button>
             </form>
-
           </div>
         </div>
       </div>
@@ -34,6 +40,9 @@ export default {
   bodyClass: "maps-page",
   data: function() {
     return {
+      map: null,
+      mapLayer: null,
+      displayOption: "income",
       min: Number.MAX_VALUE,
       max: -Number.MAX_VALUE,
     };
@@ -47,7 +56,7 @@ export default {
         west: 97,
         east: -188,
       };
-      var map = new google.maps.Map(document.getElementById("gmap"), {
+      this.map = new google.maps.Map(document.getElementById("gmap"), {
         center: { lat: -25, lng: 130 },
         restriction: {
           latLngBounds: AUSSIE_BOUNDS,
@@ -218,28 +227,31 @@ export default {
         ],
       });
 
-      let incomeLayer = this.loadIncome(mapLayer);
+      let incomeLayer = this.loadIncome();
       let earthquakeLayer = this.loadEarthquakeLayer();
-      let mapLayer = this.loadMapLayer(map, incomeLayer);
+      this.mapLayer = this.loadMapLayer(incomeLayer);
 
       // adding layers into map
-      mapLayer.setMap(map);
-      earthquakeLayer.setMap(map);
+      this.mapLayer.setMap(this.map);
+      earthquakeLayer.setMap(this.map);
     },
 
-    loadMapLayer: function(map, incomeLayer) {
-      let mapLayer = new google.maps.Data();
-      mapLayer.loadGeoJson("./GeoJson-Data-master/SA3_2016_AUST_SIM.json", {
+    loadMapLayer: function(incomeLayer) {
+      let maplayer = new google.maps.Data();
+      maplayer.loadGeoJson("./GeoJson-Data-master/SA3_2016_AUST_SIM.json", {
         idPropertyName: "SA3_CODE16",
       });
-      mapLayer.setStyle((feature) => {
+      maplayer.setStyle((feature) => {
         let color = "white";
         let stroke_weight = 0.1;
         let stroke_opacity = 1;
         let fill_opacity = 0;
 
         /* display income attributes using gradient style */
-        if (incomeLayer.getFeatureById(feature.getId())) {
+        if (
+          feature.getProperty("displayOption") == "income" &&
+          incomeLayer.getFeatureById(feature.getId())
+        ) {
           var high = [5, 69, 54];
           var low = [151, 83, 34];
           var delta =
@@ -255,7 +267,6 @@ export default {
           console.log(delta, color);
           fill_opacity = 1;
         }
-
 
         // highlight when moveover
         if (feature.getProperty("isColorful") == true) {
@@ -275,25 +286,25 @@ export default {
       });
 
       // auto zoom after click one region
-      mapLayer.addListener("rightclick", (e) => {
+      maplayer.addListener("rightclick", (e) => {
         var maker = new google.maps.Marker({
           position: e.latLng,
-          map: map,
+          map: this.map,
         });
       });
-      mapLayer.addListener("dblclick", function(e) {
+      maplayer.addListener("dblclick", function(e) {
         let bounds = new google.maps.LatLngBounds();
         e.feature.getGeometry().forEachLatLng((x) => bounds.extend(x));
-        map.fitBounds(bounds);
-        map.panToBounds(bounds);
+        this.map.fitBounds(bounds);
+        this.map.panToBounds(bounds);
       });
-      mapLayer.addListener("mouseover", (e) => {
+      maplayer.addListener("mouseover", (e) => {
         e.feature.setProperty("isColorful", true);
       });
-      mapLayer.addListener("mouseout", (e) => {
+      maplayer.addListener("mouseout", (e) => {
         e.feature.setProperty("isColorful", false);
       });
-      mapLayer.addListener("addfeature", (e) => {
+      maplayer.addListener("addfeature", (e) => {
         if (incomeLayer.getFeatureById(e.feature.getId())) {
           let income = incomeLayer
             .getFeatureById(e.feature.getId())
@@ -307,7 +318,7 @@ export default {
           }
         }
       });
-      return mapLayer;
+      return maplayer;
     },
 
     loadEarthquakeLayer: function() {
@@ -347,6 +358,24 @@ export default {
       );
       return incomeLayer;
     },
+    zoomToMelb: function() {
+      var myOptions = {
+        zoom: 9,
+        center: new google.maps.LatLng(-37.815018, 144.946014),
+        panControl: false,
+      };
+      this.map.setOptions(myOptions);
+    },
+    displayIncome: function() {
+      this.mapLayer.forEach(function(feature) {
+        feature.setProperty("displayOption", "income");
+      });
+    },
+    displayPopulation: function() {
+      this.mapLayer.forEach(function(feature) {
+        feature.setProperty("displayOption", "population");
+      });
+    },
   },
   mounted() {
     const googleMapApi = GoogleMapsApiLoader({
@@ -360,56 +389,63 @@ export default {
 </script>
 
 <style>
-  #wrapper { position: relative; }
+#wrapper {
+  position: relative;
+}
 
-  #container-box { position: absolute; top: 250px; left: 30px; z-index: 99; }
-  
-  .floating-box {
-    width: 400px;
-    height: 400px;
-    overflow: hidden;
-  }
+#container-box {
+  position: absolute;
+  top: 250px;
+  left: 30px;
+  z-index: 99;
+}
 
-  .glass {
-    width: 100%;
-    height: 100%;
-    left: 4px;
-    top: 4px;
-    background: rgba(40, 40, 40, 0);
-    filter: blur(0px);
-    z-index:999;
-  }
+.floating-box {
+  width: 400px;
+  height: 400px;
+  overflow: hidden;
+}
 
-  form.example input[type=text] {
-    padding: 8px;
-    font-size: 12px;
-    border: 0px solid grey;
-    float: left;
-    width: 40%;
-    background: black;
-    margin-left: -29px;
-  }
+.glass {
+  width: 100%;
+  height: 100%;
+  left: 4px;
+  top: 4px;
+  background: rgba(40, 40, 40, 0);
+  filter: blur(0px);
+  z-index: 999;
+}
 
-  form.example button {
-    float: left;
-    width: 15%;
-    padding: 10px;
-    background: black;
-    color: white;
-    font-size: 9.5px;
-    border: 0px solid grey;
-    border-left: none;
-    cursor: pointer;
-  }
+form.example input[type="text"] {
+  padding: 8px;
+  font-size: 12px;
+  border: 0px solid grey;
+  float: left;
+  width: 40%;
+  background: black;
+  margin-left: -29px;
+}
 
-  form.example button:hover {
-    background:white;
-    color: black;
-  }
+form.example button {
+  float: left;
+  width: 15%;
+  padding: 10px;
+  background: black;
+  color: white;
+  font-size: 9.5px;
+  border: 0px solid grey;
+  border-left: none;
+  cursor: pointer;
+}
 
-  form.example::after {
-    content: "";
-    clear: both;
-    display: table;
-  }
+form.example button:hover {
+  background: white;
+  color: black;
+}
+
+form.example::after {
+  content: "";
+  clear: both;
+  display: table;
+}
 </style>
