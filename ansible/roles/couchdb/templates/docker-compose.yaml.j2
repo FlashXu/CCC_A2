@@ -9,7 +9,7 @@ services:
       - 5984:5984
       - 9100:9100
     volumes:
-      - /data:/opt/couchdb/data
+      - /data/master:/opt/couchdb/data
     environment:
       - COUCHDB_USER={{ db_user }}
       - COUCHDB_PASSWORD={{ db_pwd }}

@@ -11,6 +11,7 @@ api = utils.api()
 
 # CouchDB connection
 db = utils.db()
+udb = utils.db(name='user')
 
 # Australia bounding box
 bounding = [113.338953078, -43.6345972634, 153.569469029, -10.6681857235]
@@ -20,12 +21,20 @@ def process(tweet):
     try:
         data = utils.parse_tweet(tweet)
         # save the new tweet
-        print(f'uploading tweets {data["_id"]}')
-        db.save(data)
+        if data:
+            db.save(data)
+            print(f'uploading tweets {data["_id"]}')
+
+            user = utils.parse_user(tweet['user'])
+            if user:
+                udb.save(user)
+                print(f'uploading user {user["_id"]}')
+
     except Exception as e:
         with open('streamlog.txt', 'a') as f:
-            msg = f'{data["_id"]}: {repr(e)}\n{data}\n'
+            msg = f'{data["_id"]}: {repr(e)}\n'
             f.write(msg)
+
 
 
 # Create a class inheriting from StreamListener
@@ -45,6 +54,7 @@ class TwitterStream(StreamListener):
             print(f'ERROR: code {status_code}')
 
     ''' Rate Limit '''
+
     def on_timeout(self):
         print('~~~~~~~~Timeout, sleeping for 60 seconds...\n')
         sleep(60)

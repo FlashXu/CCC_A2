@@ -35,10 +35,6 @@ def stream(url, func=requests.get, stream=True):
         yield from filter(None, map(parse_line, r.iter_lines()))
 
 
-def break_to_chunk(l, size=100):
-    return [l[i:i + size] for i in range(0, len(l), size)]
-
-
 def split_every(iterable, chunk=100):
     i = iter(iterable)
     piece = list(islice(i, chunk))
@@ -60,12 +56,12 @@ def api(index=None, wait_on_rate_limit=True, wait_on_rate_limit_notify=True, tok
     return tweepy.API(auth, wait_on_rate_limit=wait_on_rate_limit, wait_on_rate_limit_notify=wait_on_rate_limit_notify)
 
 
-def db(name='tweet-stream', url='localhost:5984', username='admin', password='admin'):
+def db(name='tweet', url='172.26.131.114:5984', username='admin', password='admin'):
     return couchdb.Server(f'http://{username}:{password}@{url}').__getitem__(name)
 
 
 def bulk_parse_tweet(raw_tweets, blacklist=['googuns_lulz', 'object82']):
-    return list(filter(None, map(lambda s: parse_tweet(s._json, blacklist), raw_tweets)))
+    return list(filter(None, [parse_tweet(t, blacklist) for t in raw_tweets]))
 
 
 def parse_tweet(raw_tweet, blacklist=['googuns_lulz', 'object82']):
@@ -73,7 +69,7 @@ def parse_tweet(raw_tweet, blacklist=['googuns_lulz', 'object82']):
         return
 
     data = {}
-    data['_id'] = raw_tweet['id_str']
+    data['_id'] = f"{raw_tweet['user']['id_str']}:{raw_tweet['id_str']}"
     data['date'] = datetime.strptime(
         raw_tweet['created_at'], '%a %b %d %H:%M:%S %z %Y').strftime('%Y-%m-%d %H:%M:%S%z')
     data['user'] = raw_tweet['user']['screen_name']
@@ -101,22 +97,19 @@ def parse_tweet(raw_tweet, blacklist=['googuns_lulz', 'object82']):
         coordinate = raw_tweet['geo']['coordinates']
         if len(coordinate) == 2:
             data['geo'] = [coordinate[1], coordinate[0]]
-
-    place = raw_tweet['place']
-    place_key = ['place_type', 'full_name', 'bounding_box']
-    data['place'] = {k: place[k] for k in place if k in place_key}
+    else:
+        return
 
     return data
 
 
-def bulk_parse_user(raw_users, level):
-    return list(filter(None, map(lambda u: parse_user(u._json, level), raw_users)))
+def bulk_parse_user(raw_users, level=0):
+    return list(filter(None, [parse_user(u, level) for u in raw_users]))
 
 
-def parse_user(raw_user, level):
+def parse_user(raw_user, level=0):
     user = {}
-    user['_id'] = 'u_' + raw_user['id_str']
-    user['type'] = 'user'
+    user['_id'] = raw_user['id_str']
     user['name'] = raw_user['screen_name']
     user['level'] = level
     user['expanded'] = False
@@ -127,33 +120,14 @@ def parse_user(raw_user, level):
     activity = user['followers_count'] + user['friends_count']
 
     return None if \
-        activity < 400 or \
+        activity < 300 or \
         activity > 5000 or \
         raw_user['protected'] or \
         user['statuses_count'] > 100000 \
         else user
 
 
-def batch_update_by_username(db, names, **args):
-    docs = [r.doc for r in db.view(
-        'user_tree/by_name', keys=names, include_docs=True)]
-    for doc in docs:
-        for k, v in args.items():
-            doc[k] = v
-    return db.update(docs)
-    # result = db.update(docs)
-    # for r in result:
-    #     print(r)
-
-
-def update_by_username(db, name, **args):
-    doc = db.view('user_tree/by_name', key=name, include_docs=True).rows[0].doc
-    for k, v in args.items():
-        doc[k] = v
-    db.save(doc)
-
-
-def batch_update_by_id(db, ids, chunk_size=1500, **args):
+def bulk_update_by_id(db, ids, chunk_size=1500, **args):
     success = 0
     for chunk in split_every(ids, chunk_size):
         docs = [r.doc for r in db.view(
