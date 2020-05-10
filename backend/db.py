@@ -30,16 +30,16 @@ def on_startup():
                     user['searched'] = 'queue'
                     users.append(user)
 
-                if not users:   # wait for 5 seconds to next fetch
+                if users:   # wait for 5 seconds to next fetch
+                    results = db.update(users)
+                    logging.warning(
+                        f'Put {sum([r[0] for r in results])} into queue ...')
+                    for user, (suc, uid, rev) in zip(users, results):
+                        if suc:
+                            user['_rev'] = rev
+                            q.put(user)
+                else:
                     sleep(5)
-
-                results = db.update(users)
-                logging.warning(
-                    f'Put {sum([r[0] for r in results])} into queue ...')
-                for user, (suc, uid, rev) in zip(users, results):
-                    if suc:
-                        user['_rev'] = rev
-                        q.put(user)
             else:
                 sleep(1)
 
