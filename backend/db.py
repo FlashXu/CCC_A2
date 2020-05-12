@@ -57,8 +57,8 @@ def on_exit():
         f'Put back {sum([r[0] for r in result])} users from queue to db.')
 
 
-db = utils.db(name='user')
-on_startup()
+db = utils.db(name='priority_user')
+# on_startup()
 
 
 @bp.route('/monitor/<level>/')
@@ -71,6 +71,7 @@ def monitor(level):
     parameters:
       - in: path
         name: level
+        description: Aggregate level of user tree
         enum: [1, 2]
         default: 1
         required: true

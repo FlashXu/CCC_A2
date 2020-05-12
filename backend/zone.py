@@ -1,7 +1,7 @@
 from flask import jsonify, make_response, Blueprint, abort
 from datetime import datetime
 from bisect import bisect_left
-import logging
+import requests
 import utils
 import json
 
@@ -13,7 +13,8 @@ sa2 = json.load(open('sa2.json', 'r'))
 
 def parse_date(s):
     try:
-        return datetime.strptime(s, '%Y-%m-%d') if s else None
+        datetime.strptime(s, '%Y-%m-%d')
+        return s.split('-')
     except ValueError:
         abort(400, make_response(
             {'error': f'{s} is not a valid date in format YYYY-MM-DD'}))
@@ -25,25 +26,44 @@ def zones_start_with(id):
     return sa2[bisect_left(sa2, id):bisect_left(sa2, next_id)]
 
 
-@bp.route('/count/<sa>/')
-@bp.route('/count/<sa>/<start>/')
-@bp.route('/count/<sa>/<start>/<end>/')
-def get_count(sa, start='2013-01-01', end=datetime.today().strftime('%Y-%m-%d')):
-    cut = [3, 5, 9]
-    if len(sa) not in cut:
-        abort(400)
+def cut(s, cut_point=[3, 5]):
+    return [s[i:j] for i, j in zip([None] + cut_point, cut_point + [None])]
 
-    group_level = cut.index(len(sa)) + 1
+
+def build_query(sa2, start, end, **kwargs):
+    return {
+        'startkey': [*cut(sa2), *start],
+        'endkey': [*cut(sa2), *end],
+        **kwargs,
+    }
+
+@bp.route('/')
+@bp.route('/<sa>/')
+@bp.route('/<sa>/<start>/')
+@bp.route('/<sa>/<start>/<end>/')
+def get_count(sa=None, start='2013-01-01', end=datetime.today().strftime('%Y-%m-%d')):
+    # valid_sa = [3, 5, 9]
+    # if len(sa) not in valid_sa:
+    #     abort(400)
+
     start = parse_date(start)
     end = parse_date(end)
 
-    response = db.view('statistic/geo_by_zone',
-                       startkey=[sa[:3], sa[3:5], sa[5:],
-                                 start.year, start.month, start.day],
-                       endkey=[sa[:3], sa[3:5] or {}, sa[5:] or {},
-                               end.year or {}, end.month or {}, end.day or {}],
-                       group_level=group_level
-                       )
-    # print(list(response))
+    sa = zones_start_with(sa) if sa else sa2
 
-    return jsonify(list(response))
+    queries = {'queries': [build_query(
+        s, start, end, group_level=3) for s in sa]}
+
+    url = f'{utils.base()}/tweet/_design/statistic/_view/geo_by_zone/queries'
+    response = requests.post(url, json=queries).content
+    results = json.loads(response)['results']
+    try:
+        rows = [r['rows'][0] for r in results if r['rows']]
+    except:
+        print(results)
+    
+    result = {''.join(r['key']): r['value'] for r in rows}
+
+
+    return result
+    

@@ -4,3 +4,4 @@ redis
 couchdb
 setuptools
 flasgger
+requests

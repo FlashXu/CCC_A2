@@ -20,7 +20,8 @@ def acquire_user():
                 users.append(user)
 
             if not users:
-                break
+                time.sleep(5)
+                continue
 
             results = db.update(users)
             for user, (suc, uid, rev) in zip(users, results):
@@ -35,7 +36,12 @@ def acquire_user():
 def expand(n):
     api = utils.api(n)
     while not stop.isSet():
-        user = q.get()
+        try:
+            user = q.get_nowait()
+        except:
+            time.sleep(5)
+            continue
+
         try:
             level = user['level'] + 1
             uid = user["_id"]
@@ -87,10 +93,10 @@ def main(worker_size):
 
 
 if __name__ == "__main__":
-    worker_size = 12
-    offset = 7 * worker_size
+    worker_size = 60
+    offset = 1 * worker_size
 
-    db = utils.db(name='user', url='172.26.133.133:5984')
+    db = utils.db(name='priority_user', url='172.26.133.133:5984')
     # db = utils.db(name='user', url='45.88.195.224:9001')
     # db = utils.db(url='45.88.195.224:9001')
     stop = Event()

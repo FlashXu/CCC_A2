@@ -39,10 +39,11 @@ class Counter:
         self.round = 0
         self.geo = 0
         self.total = 0
+        self.maximum = 0
         self.threshold = threshold
 
     def rate(self):
-        return self.geo / self.total * 100
+        return 100.0 * self.geo / self.total
 
     def abort(self):
         return self.round == 4 and self.rate() < 1 or \
@@ -52,6 +53,10 @@ class Counter:
         self.round += 1
         self.geo += gc
         self.total += tc
+        self.maximum = max(self.maximum, self.rate())
+
+    def promote(self, threshold=10):
+        return self.maximum >= threshold or self.rate() >= self.threshold
 
 
 # consumer
@@ -73,7 +78,7 @@ def search(n):
 
                 counter.update(len(parsed_data), len(statuses))
 
-                info = f'Key {n:3} {user["_id"]:21} :  Place {len(parsed_data):2}/{len(statuses):3}  Upload {success:2}  Rate {counter.rate():4.1f}%'
+                info = f'Key {n:3} {user["_id"]:19} :  Place {len(parsed_data):2}/{len(statuses):3}  Upload {success:2}  Rate {counter.rate():4.1f}%'
 
                 if counter.abort():
                     print(f'{info}  Abort...')
@@ -81,6 +86,11 @@ def search(n):
                 else:
                     print(info)
 
+            # promote the user level for further friends/follower BFS searching
+            if counter.promote():
+                user['level'] = 0
+                print(f'Key {n:3} {user["_id"]:19} :  Maximum {counter.maximum:4.1f}%  Final {counter.rate():4.1f}%  Promote!!!')
+            
             user['searched'] = True
         except Exception as e:
             msg = str(e)
@@ -127,7 +137,7 @@ if __name__ == "__main__":
     db_ip = '172.26.131.114:5984'
 
     db = utils.db(url=db_ip)
-    udb = utils.db(name='user', url=db_ip)
+    udb = utils.db(name='priority_user', url=db_ip)
 
     stop = Event()
     main(worker_size)
