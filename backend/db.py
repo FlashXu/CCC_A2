@@ -58,7 +58,7 @@ def on_exit():
 
 
 db = utils.db(name='priority_user')
-# on_startup()
+on_startup()
 
 
 @bp.route('/monitor/<level>/')
