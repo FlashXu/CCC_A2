@@ -87,4 +87,5 @@ swagger_config = {
     'ui_params': {
         'supportedSubmitMethods': ['get', 'fetch']
     },
+    "schemes": ['http']
 }

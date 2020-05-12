@@ -43,7 +43,7 @@ class Counter:
         self.threshold = threshold
 
     def rate(self):
-        return 100.0 * self.geo / self.total
+        return 100.0 * self.geo / self.total if self.total else 0.0
 
     def abort(self):
         return self.round == 4 and self.rate() < 1 or \
@@ -55,8 +55,8 @@ class Counter:
         self.total += tc
         self.maximum = max(self.maximum, self.rate())
 
-    def promote(self, threshold=10):
-        return self.maximum >= threshold or self.rate() >= self.threshold
+    def promote(self, threshold=5):
+        return self.geo > 20 or self.maximum >= threshold or self.rate() >= self.threshold
 
 
 # consumer
@@ -90,7 +90,7 @@ def search(n):
             if counter.promote():
                 user['level'] = 0
                 print(f'Key {n:3} {user["_id"]:19} :  Maximum {counter.maximum:4.1f}%  Final {counter.rate():4.1f}%  Promote!!!')
-            
+
             user['searched'] = True
         except Exception as e:
             msg = str(e)

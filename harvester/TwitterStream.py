@@ -11,7 +11,7 @@ api = utils.api()
 
 # CouchDB connection
 db = utils.db()
-udb = utils.db(name='user')
+udb = utils.db(name='priority_user')
 
 # Australia bounding box
 bounding = [113.338953078, -43.6345972634, 153.569469029, -10.6681857235]

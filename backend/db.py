@@ -1,9 +1,9 @@
-import couchdb
 from flask import jsonify, make_response, Blueprint, abort
 from auth import auth
 from atexit import register
 from time import sleep
 from threading import Thread
+from flasgger import swag_from
 import utils
 import logging
 import json
@@ -62,25 +62,8 @@ on_startup()
 
 
 @bp.route('/monitor/<level>/')
+@swag_from('docs/db_monitor.yml')
 def monitor(level):
-    """
-    This is the monitor of the database.
-    ---
-    tags:
-      - db
-    parameters:
-      - in: path
-        name: level
-        description: Aggregate level of user tree
-        enum: [1, 2]
-        default: 1
-        required: true
-    responses:
-      200:
-        description: Number of documents in the database,
-         and the worker status of timeline miner.
-        
-    """
     search = []
     for item in db.view('tree/searched', group_level=level):
         search.append({str(item.key): item.value})

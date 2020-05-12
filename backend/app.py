@@ -3,22 +3,19 @@ from flasgger import Swagger
 from auth import auth
 from error_handler import handler as error_handler
 from db import bp as db_blueprint
-from zone import bp as zone_blueprint
+from geo import bp as geo_blueprint
+from language import bp as lang_blueprint
 from utils import template, swagger_config
 
 app = Flask(__name__)
 
 app.register_blueprint(error_handler)
 app.register_blueprint(db_blueprint, url_prefix='/db')
-app.register_blueprint(zone_blueprint, url_prefix='/zone')
+app.register_blueprint(geo_blueprint, url_prefix='/geo')
+app.register_blueprint(lang_blueprint, url_prefix='/lang')
 
 
 Swagger(app, config=swagger_config, template=template)
-
-
-# @app.route('/')
-# def index():
-#     return redirect(url_for('flasgger.apidocs'))
 
 
 @app.route('/shutdown')

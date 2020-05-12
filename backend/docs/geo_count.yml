@@ -1,0 +1,15 @@
+Get the count of tweets with geo enabled for all statistic area. (Time aggregated data please use other endpoints with detail SA code)
+<b>Note:</b> Retrieve data of all SA2 (level=3) is relatively slow, please consider using muti-threads queries with sub-area.
+---
+tags:
+  - geo
+parameters:
+  - name: level
+    in: query
+    description: aggregate level of the stat
+    required: true
+    enum: [1, 2, 3]
+
+responses:
+  200:
+    description: A dictionary with format SA2:Count

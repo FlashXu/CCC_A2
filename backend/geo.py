@@ -1,12 +1,13 @@
-from flask import jsonify, make_response, Blueprint, abort
+from flask import jsonify, make_response, Blueprint, abort, request
 from datetime import datetime
 from bisect import bisect_left
+from flasgger import swag_from
 import requests
 import utils
 import json
 
 
-bp = Blueprint('zone', __name__)
+bp = Blueprint('geo', __name__)
 db = utils.db()
 sa2 = json.load(open('sa2.json', 'r'))
 
@@ -37,14 +38,30 @@ def build_query(sa2, start, end, **kwargs):
         **kwargs,
     }
 
+
 @bp.route('/')
-@bp.route('/<sa>/')
-@bp.route('/<sa>/<start>/')
+@swag_from('docs/geo_count.yml')
+def get_all_count():
+    level = request.args.get('level')
+    if not level:
+        abort(404)
+    if level not in ['1', '2', '3']:
+        abort(400)
+
+    count = {}
+    for r in db.view('statistic/geo_by_zone', group_level=level):
+        if r.key:
+            key = ''.join(r.key)
+            if key != 'und':
+                count[key] = r.value
+    return count
+
+
 @bp.route('/<sa>/<start>/<end>/')
-def get_count(sa=None, start='2013-01-01', end=datetime.today().strftime('%Y-%m-%d')):
-    # valid_sa = [3, 5, 9]
-    # if len(sa) not in valid_sa:
-    #     abort(400)
+@swag_from('docs/geo_time_count.yml')
+def get_count(sa, start, end):
+    if start > end:
+        abort(400)
 
     start = parse_date(start)
     end = parse_date(end)
@@ -57,13 +74,7 @@ def get_count(sa=None, start='2013-01-01', end=datetime.today().strftime('%Y-%m-
     url = f'{utils.base()}/tweet/_design/statistic/_view/geo_by_zone/queries'
     response = requests.post(url, json=queries).content
     results = json.loads(response)['results']
-    try:
-        rows = [r['rows'][0] for r in results if r['rows']]
-    except:
-        print(results)
-    
+    rows = [r['rows'][0] for r in results if r['rows']]
     result = {''.join(r['key']): r['value'] for r in rows}
 
-
     return result
-    
