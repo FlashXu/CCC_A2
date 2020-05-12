@@ -11,13 +11,17 @@ from queue import Queue
 def acquire_user():
     while not stop.isSet():
         if q.qsize() <= worker_size:
-            rows = db.view('user_tree/expand', limit=worker_size, reduce=False, sorted=False,
-                           startkey=[False], endkey=[False, {}], include_docs=True).rows
+            rows = db.view('tree/expanded', limit=worker_size,
+                           reduce=False, include_docs=True)[[False, 0]:[False, 0, {}]].rows
             users = []
             for row in rows:
                 user = row.doc
                 user['expanded'] = 'queue'
                 users.append(user)
+
+            if not users:
+                break
+
             results = db.update(users)
             for user, (suc, uid, rev) in zip(users, results):
                 if suc:
@@ -34,31 +38,34 @@ def expand(n):
         user = q.get()
         try:
             level = user['level'] + 1
-            uid = user["_id"][2:]
+            uid = user["_id"]
 
             follower_ids = api.followers_ids(user_id=uid, count=5000)
             friend_ids = api.friends_ids(user_id=uid, count=5000)
             ids = list(set(follower_ids) | set(friend_ids))
 
-            for sub_ids in utils.break_to_chunk(ids):
+            for sub_ids in utils.split_every(ids):
                 users = api.lookup_users(user_ids=sub_ids)
-                parsed_user = utils.bulk_parse_user(users, level)
+                parsed_user = utils.bulk_parse_user(
+                    [u._json for u in users], level)
                 result = db.update(parsed_user)
                 success = sum([r[0] for r in result])
 
                 print(
-                    f'Key {n:3} {user["_id"]:21} : Raw {len(users):3}  Parse {len(parsed_user):3}  Upload {success}')
+                    f'Key {n:3} {user["_id"]:19} : Raw {len(users):3}  Parse {len(parsed_user):3}  Upload {success}')
 
             user['expanded'] = True
             db.save(user)
 
         except Exception as e:
-            print(repr(e))
-            if 'Not authorized' in str(e) or 'does not exist' in str(e):
-                user['expanded'] = repr(e)
-                db.save(user)
+            msg = str(e)
+            print(user, msg)
+            if any([m in msg for m in ['Max retries exceeded', 'Connection']]):
+                user['expanded'] = False
             else:
-                q.put(user)
+                user['expanded'] = msg
+        finally:
+            db.update([user])
 
 
 def main(worker_size):
@@ -81,10 +88,10 @@ def main(worker_size):
 
 if __name__ == "__main__":
     worker_size = 12
-    offset = 8 * worker_size
+    offset = 7 * worker_size
 
-    # db = utils.db()
-    db = utils.db(url='115.146.95.16:9001')
+    db = utils.db(name='user', url='172.26.133.133:5984')
+    # db = utils.db(name='user', url='45.88.195.224:9001')
     # db = utils.db(url='45.88.195.224:9001')
     stop = Event()
     q = Queue(3 * worker_size)

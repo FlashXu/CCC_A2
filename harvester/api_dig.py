@@ -13,8 +13,11 @@ import json
 
 
 def acquire_user():
-    response = requests.get(f'http://{backend_ip}/db/next_search').content
-    return json.loads(response)
+    try:
+        response = requests.get(f'http://{backend_ip}/db/next_search').content
+        return json.loads(response)
+    except:
+        pass
 
 
 def user_tweets(api, uid, max_tweet=100000, max_id=None, min_date=datetime(2014, 1, 1)):
@@ -56,6 +59,9 @@ def search(n):
     api = utils.api(n)
     while not stop.isSet():
         user = acquire_user()
+        if not user:
+            time.sleep(5)
+            continue
         try:
             # skip this user if the geo rate is less than threshold
             counter = Counter()
@@ -79,7 +85,7 @@ def search(n):
         except Exception as e:
             msg = str(e)
             print(user, msg)
-            if any([m in msg for m in ['Max retries exceeded', 'Connection']]):
+            if any([m in msg for m in ['Max retries exceeded', 'Connection', 'code', 'payload']]):
                 user['searched'] = False
             else:
                 user['searched'] = msg

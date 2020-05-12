@@ -1,0 +1,10 @@
+- hosts: db_server
+  become: yes
+  gather_facts: no
+
+  vars_files:
+    - host_vars/remote_vars.yaml
+
+  tasks:
+  - name: backup db files
+    shell: cp -r /data/master /data/backup_$(date +%F_%R)
