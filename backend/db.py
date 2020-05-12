@@ -4,18 +4,13 @@ from auth import auth
 from atexit import register
 from time import sleep
 from threading import Thread
-from utils import RedisQueue
+import utils
 import logging
 import json
-from datetime import datetime
 
 
 bp = Blueprint('db', __name__)
-q = RedisQueue('db', host='redis')
-
-
-def udb(name='user', url='172.26.131.114:5984', username='admin', password='admin'):
-    return couchdb.Server(f'http://{username}:{password}@{url}').__getitem__(name)
+q = utils.RedisQueue('db', host='redis')
 
 
 def on_startup():
@@ -62,19 +57,36 @@ def on_exit():
         f'Put back {sum([r[0] for r in result])} users from queue to db.')
 
 
-# db = udb(url='45.88.195.224:9001')
-# db = udb(url='host.docker.internal:5984')
-db = udb()
+db = utils.db(name='user')
 on_startup()
 
 
-@bp.route('/monitor')
-@auth.login_required
-def monitor():
+@bp.route('/monitor/<level>/')
+def monitor(level):
+    """
+    This is the monitor of the database.
+    ---
+    tags:
+      - db
+    parameters:
+      - in: path
+        name: level
+        enum: [1, 2]
+        default: 1
+        required: true
+    responses:
+      200:
+        description: Number of documents in the database,
+         and the worker status of timeline miner.
+        
+    """
     search = []
-    for item in db.view('tree/searched', group_level=2):
+    for item in db.view('tree/searched', group_level=level):
         search.append({str(item.key): item.value})
-    return {'Search': search}
+    return {
+        '# of Docs': utils.db().info()['doc_count'],
+        'Search': search
+    }
 
 
 @bp.route('/next_search')
@@ -86,35 +98,3 @@ def next_search():
 @bp.route('/queue')
 def q_stat():
     return str(q.qsize())
-
-
-def parse_date(s):
-    try:
-        return datetime.strptime(s, '%Y-%m-%d') if s else None
-    except ValueError:
-        abort(400, make_response(
-            {'error': f'{s} is not a valid date in format YYYY-MM-DD'}))
-
-
-@bp.route('/count/<sa>/')
-@bp.route('/count/<sa>/<start>/')
-@bp.route('/count/<sa>/<start>/<end>/')
-def get_count(sa, start='2013-01-01', end=datetime.today().strftime('%Y-%m-%d')):
-    cut = [3, 5, 9]
-    if len(sa) not in cut:
-        abort(400)
-
-    group_level = cut.index(len(sa)) + 1
-    start = parse_date(start)
-    end = parse_date(end)
-
-    response = db.view('statistic/geo_by_zone',
-                       startkey=[sa[:3], sa[3:5], sa[5:],
-                                 start.year, start.month, start.day],
-                       endkey=[sa[:3], sa[3:5] or {}, sa[5:] or {},
-                               end.year or {}, end.month or {}, end.day or {}],
-                       group_level=group_level
-                       )
-    # print(list(response))
-
-    return jsonify(list(response))

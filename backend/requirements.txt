@@ -2,3 +2,5 @@ flask
 Flask-HTTPAuth
 redis
 couchdb
+setuptools
+flasgger

@@ -4,13 +4,13 @@ services:
   web:
     build: .
     ports: 
-      - "5000:5000"
+      - 5000:5000
     volumes:
       - .:/code
     depends_on:
       - redis
     logging:
       options:
-          max-size: 10m
+        max-size: 10m
   redis:
     image: redis:alpine

@@ -1,5 +1,15 @@
 from redis import Redis, ConnectionPool
 import json
+import couchdb
+
+
+def base(url='172.26.131.114:5984', username='admin', password='admin'):
+    # url = '45.88.195.224:9001'
+    return f'http://{username}:{password}@{url}'
+
+
+def db(name='tweet', url='172.26.131.114:5984', username='admin', password='admin'):
+    return couchdb.Server(base(url, username, password)).__getitem__(name)
 
 
 class RedisQueue(object):
@@ -48,3 +58,30 @@ class RedisQueue(object):
     def get_nowait(self):
         """Equivalent to get(False)."""
         return self.get(False)
+
+
+template = {
+    'info': {
+        'description': 'This is the API of the backend, including queries the count for each statistic area(SA) of Australia',
+        'version': '0.0.1',
+        'title': '2020-S1 COMP90024-Team22 backend',
+        'contact': {
+            'email': 'xqiang@student.unimelb.edu.au'
+        },
+    }
+}
+
+swagger_config = {
+    "headers": [],
+    "specs": [
+        {
+            "endpoint": 'apispec',
+            "route": '/apispec.json',
+            "rule_filter": lambda rule: True,  # all in
+            "model_filter": lambda tag: True,  # all in
+        }
+    ],
+    "static_url_path": "/flasgger_static",
+    "swagger_ui": True,
+    "specs_route": "/"
+}
