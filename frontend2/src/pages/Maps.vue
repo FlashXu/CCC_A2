@@ -15,7 +15,7 @@
             </b-dropdown>
 
             <form class="example" style="margin:auto;max-width:300px">
-              <input type="text" placeholder="Track user by ID.." name="search2">
+              <input style="color:white" type="text" placeholder="Track user by ID.." name="search2">
               <button type="submit">Go</button>
             </form>
 
