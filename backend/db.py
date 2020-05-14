@@ -19,7 +19,7 @@ def on_startup():
             try:
                 if q.qsize() < threshold:
                     rows = db.view('tree/searched', limit=threshold, reduce=False,
-                                   include_docs=True).rows
+                                   include_docs=True)[[False]:[False, {}]].rows
                     users = []
                     for row in rows:
                         user = row.doc
