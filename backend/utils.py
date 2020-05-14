@@ -1,6 +1,7 @@
 from redis import Redis, ConnectionPool
 import json
 import couchdb
+from bisect import bisect_left
 
 
 def base(url='172.26.131.114:5984', username='admin', password='admin'):
@@ -89,3 +90,14 @@ swagger_config = {
     },
     "schemes": ['http']
 }
+
+sa2 = json.load(open('sa2.json', 'r'))
+
+def zones_start_with(id):
+    id = str(id)
+    next_id = str(int(id) + 1)
+    return sa2[bisect_left(sa2, id):bisect_left(sa2, next_id)]
+
+def cut(s, cut_point=[3, 5]):
+    return [s[i:j] for i, j in zip([None] + cut_point, cut_point + [None])]
+
