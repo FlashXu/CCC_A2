@@ -4,30 +4,76 @@
     <div id="gmap" style="width: 100%; height: 1000px;"></div>
 
     <!-- Elements on map -->
-    <div id="container-box">
-      <div class="floating-box">
-        <div class="glass">
-          <div>
-            <b-dropdown id="dropdown-1" text="Aurin Data" class="m-md-2">
-              <b-dropdown-item>Age</b-dropdown-item>
-              <b-dropdown-item>Salary</b-dropdown-item>
-              <b-dropdown-item>Other languages</b-dropdown-item>
-              <b-dropdown-item @click="displayIncome">Income</b-dropdown-item>
-              <b-dropdown-item @click="displayPopulation">Population</b-dropdown-item>
-              <b-dropdown-item v-on:click="zoomToMelb">Melbourne</b-dropdown-item>
-            </b-dropdown>
 
-            <form class="example" style="margin:auto;max-width:300px">
-              <input
-                type="text"
-                placeholder="Track user by ID.."
-                name="search2"
-              />
-              <button type="submit">Go</button>
-            </form>
+    <div>
+      <b-button id="side-button" v-b-toggle.sidebar-variant
+        >Display options</b-button
+      >
+      <b-sidebar
+        id="sidebar-variant"
+        title="Display options"
+        bg-variant="dark"
+        text-variant="light"
+        shadow
+      >
+        <div class="px-3 py-2">
+          <b-img
+            src="https://picsum.photos/500/500/?image=54"
+            fluid
+            thumbnail
+          ></b-img>
+        </div>
+        <div id="container-box">
+          <div class="floating-box">
+            <div class="glass">
+              <div>
+                <b-dropdown id="dropdown-1" text="Aurin Data">
+                  <b-dropdown-item>Age</b-dropdown-item>
+                  <b-dropdown-item>Salary</b-dropdown-item>
+                  <b-dropdown-item>Other languages</b-dropdown-item>
+                  <b-dropdown-item @click="displayIncome"
+                    >Income</b-dropdown-item
+                  >
+                  <b-dropdown-item @click="displayPopulation"
+                    >Population</b-dropdown-item
+                  >
+                  <b-dropdown-item @click="zoomToMelb"
+                    >Melbourne</b-dropdown-item
+                  >
+                  <b-dropdown-item @click="loadTwitterCount"
+                    >Tweets</b-dropdown-item
+                  >
+                  <b-dropdown-item @click="hideTwitterCount"
+                    >Hide Tweets</b-dropdown-item
+                  >
+                </b-dropdown>
+              </div>
+              <div>
+                <form class="example">
+                  <input
+                    type="text"
+                    placeholder="Track user by ID.."
+                    name="search2"
+                  />
+                  <button type="submit">Go</button>
+                </form>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
+      </b-sidebar>
+    </div>
+    <div id="SA3-info" v-if="displayCard">
+      <b-card
+        bg-variant="dark"
+        header="Area info"
+        text-variant="white"
+        class="text-center"
+      >
+        <b-card-text>Area: {{ sa3_name }}</b-card-text>
+        <b-card-text>Mean income: {{ sa3_mean_income }}</b-card-text>
+        <b-card-text>Total population: {{ sa3_total_population }}</b-card-text>
+      </b-card>
     </div>
   </div>
 </template>
@@ -35,6 +81,8 @@
 <script>
 import MainFooter from "@/layout/MainFooter";
 import GoogleMapsApiLoader from "google-maps-api-loader";
+import tweetCount from "../../public/GeoJson-Data-master/count.json";
+
 export default {
   name: "maps-page",
   bodyClass: "maps-page",
@@ -42,9 +90,18 @@ export default {
     return {
       map: null,
       mapLayer: null,
+      markers: [],
       displayOption: "income",
-      min: Number.MAX_VALUE,
-      max: -Number.MAX_VALUE,
+      displayCard: false,
+      sa3_name: null,
+      sa3_mean_income: null,
+      sa3_total_population:null,
+      incomeMin: Number.MAX_VALUE,
+      incomeMax: -Number.MAX_VALUE,
+      populationMin: Number.MAX_VALUE,
+      populationMax: -Number.MAX_VALUE,
+      tweetMin: Number.MAX_VALUE,
+      tweetMax: -Number.MAX_VALUE,
     };
   },
   methods: {
@@ -228,15 +285,14 @@ export default {
       });
 
       let incomeLayer = this.loadIncome();
-      let earthquakeLayer = this.loadEarthquakeLayer();
-      this.mapLayer = this.loadMapLayer(incomeLayer);
+      let populationLayer = this.loadPopulation();
+      this.mapLayer = this.loadMapLayer(incomeLayer, populationLayer);
 
       // adding layers into map
       this.mapLayer.setMap(this.map);
-      earthquakeLayer.setMap(this.map);
     },
 
-    loadMapLayer: function(incomeLayer) {
+    loadMapLayer: function(incomeLayer, populationLayer) {
       let maplayer = new google.maps.Data();
       maplayer.loadGeoJson("./GeoJson-Data-master/SA3_2016_AUST_SIM.json", {
         idPropertyName: "SA3_CODE16",
@@ -255,7 +311,8 @@ export default {
           var high = [5, 69, 54];
           var low = [151, 83, 34];
           var delta =
-            (feature.getProperty("income") - this.min) / (this.max - this.min);
+            (feature.getProperty("income") - this.incomeMin) /
+            (this.incomeMax - this.incomeMin);
 
           let colorA = [];
           for (var i = 0; i < 3; i++) {
@@ -264,10 +321,28 @@ export default {
           }
           color =
             "hsl(" + colorA[0] + "," + colorA[1] + "%," + colorA[2] + "%)";
-          console.log(delta, color);
-          fill_opacity = 1;
+          fill_opacity = 0.5;
         }
+        /* population */
+        if (
+          feature.getProperty("displayOption") == "population" &&
+          populationLayer.getFeatureById(feature.getId())
+        ) {
+          var high = [5, 69, 54];
+          var low = [151, 83, 34];
+          var delta =
+            (feature.getProperty("population") - this.populationMin) /
+            (this.populationMax - this.populationMin);
 
+          let colorA = [];
+          for (var i = 0; i < 3; i++) {
+            // calculate an integer color based on the delta
+            colorA[i] = (high[i] - low[i]) * delta + low[i];
+          }
+          color =
+            "hsl(" + colorA[0] + "," + colorA[1] + "%," + colorA[2] + "%)";
+          fill_opacity = 0.5;
+        }
         // highlight when moveover
         if (feature.getProperty("isColorful") == true) {
           color = "yellow";
@@ -299,9 +374,14 @@ export default {
         this.map.panToBounds(bounds);
       });
       maplayer.addListener("mouseover", (e) => {
+        this.displayCard = true;
+        this.sa3_name = e.feature.getProperty("SA3_NAME16");
+        this.sa3_total_population = e.feature.getProperty("population");
+        this.sa3_mean_income = e.feature.getProperty("income");
         e.feature.setProperty("isColorful", true);
       });
       maplayer.addListener("mouseout", (e) => {
+        this.displayCard = false;
         e.feature.setProperty("isColorful", false);
       });
       maplayer.addListener("addfeature", (e) => {
@@ -310,37 +390,74 @@ export default {
             .getFeatureById(e.feature.getId())
             .getProperty("est_p_inc_avg_tot_inc_excl_gov_pnsn_aud");
           e.feature.setProperty("income", income);
-          if (income > this.max) {
-            this.max = income;
+          if (income > this.incomeMax) {
+            this.incomeMax = income;
           }
-          if (income < this.min) {
-            this.min = income;
+          if (income < this.incomeMin) {
+            this.incomeMin = income;
+          }
+        }
+
+        if (populationLayer.getFeatureById(e.feature.getId())) {
+          let population = populationLayer
+            .getFeatureById(e.feature.getId())
+            .getProperty("persons_total");
+          e.feature.setProperty("population", population);
+          if (population > this.populationMax) {
+            this.populationMax = population;
+          }
+          if (population < this.populationMin) {
+            this.populationMin = population;
           }
         }
       });
       return maplayer;
     },
 
-    loadEarthquakeLayer: function() {
-      let earthquakeLayer = new google.maps.Data();
-      earthquakeLayer.loadGeoJson("./GeoJson-Data-master/earthquakes.geojson");
-      earthquakeLayer.setStyle((feature) => {
-        // earthquake circle
-        let mag = feature.getProperty("mag");
-        var circleMarker = {
+    loadTwitterCount: function() {
+      this.markers = [];
+      for (var key in tweetCount) {
+        if (tweetCount[key] > this.tweetMax) {
+          this.tweetMax = tweetCount[key];
+        }
+        if (tweetCount[key] < this.tweetMin) {
+          this.tweetMin = tweetCount[key];
+        }
+      }
+
+      for (var key in tweetCount) {
+        let feature = this.mapLayer.getFeatureById(key);
+        let bounds = new google.maps.LatLngBounds();
+        feature.getGeometry().forEachLatLng((x) => bounds.extend(x));
+        let center = bounds.getCenter();
+        let size =
+          ((tweetCount[key] - this.tweetMin) /
+            (this.tweetMax - this.tweetMin)) *
+          50;
+        let circleMarker = {
+          position: center,
           path: google.maps.SymbolPath.CIRCLE,
           fillColor: "red",
           fillOpacity: 0.4,
-          scale: Math.pow(2, mag) / 2,
+          scale: size,
           strokeColor: "white",
           strokeWeight: 0.5,
         };
-        // highlight states white when mouseover
-        return {
+        console.log("size:", size);
+        var marker = new google.maps.Marker({
+          position: center,
           icon: circleMarker,
-        };
-      });
-      return earthquakeLayer;
+        });
+        this.markers.push(marker);
+      }
+      for (let i = 0; i < this.markers.length; i++) {
+        this.markers[i].setMap(this.map);
+      }
+    },
+    hideTwitterCount: function() {
+      for (let i = 0; i < this.markers.length; i++) {
+        this.markers[i].setMap(null);
+      }
     },
     loadIncome: function() {
       let incomeLayer = new google.maps.Data();
@@ -357,6 +474,22 @@ export default {
         }
       );
       return incomeLayer;
+    },
+    loadPopulation: function() {
+      let populationLayer = new google.maps.Data();
+      populationLayer.loadGeoJson(
+        "./GeoJson-Data-master/SA3_2017_Melb_Population.json",
+        {
+          idPropertyName: "sa3_code16",
+        }
+      );
+      populationLayer.loadGeoJson(
+        "./GeoJson-Data-master/SA3_2017_Sydn_Population.json",
+        {
+          idPropertyName: "sa3_code16",
+        }
+      );
+      return populationLayer;
     },
     zoomToMelb: function() {
       var myOptions = {
@@ -395,18 +528,30 @@ export default {
 
 #container-box {
   position: absolute;
-  top: 250px;
+  top: 350px;
   left: 30px;
   z-index: 99;
 }
+#side-button {
+  position: absolute;
+  top: 150px;
+  left: 350px;
+}
+#SA3-info {
+  position: absolute;
+  top: 250px;
+  right: 30px;
+  width: 250px;
+}
 
 .floating-box {
-  width: 400px;
-  height: 400px;
+  width: 300px;
+  height: 500px;
   overflow: hidden;
 }
 
 .glass {
+  margin-left: 0px;
   width: 100%;
   height: 100%;
   left: 4px;
@@ -415,15 +560,17 @@ export default {
   filter: blur(0px);
   z-index: 999;
 }
-
+form.example {
+  margin-left: 0px;
+}
 form.example input[type="text"] {
   padding: 8px;
   font-size: 12px;
+  color: white;
   border: 0px solid grey;
   float: left;
   width: 40%;
   background: black;
-  margin-left: -29px;
 }
 
 form.example button {
