@@ -1,4 +1,4 @@
-from flask import jsonify, make_response, Blueprint, abort
+from flask import jsonify, make_response, Blueprint, abort, redirect
 from auth import auth
 from atexit import register
 from time import sleep
@@ -82,3 +82,8 @@ def next_search():
 @bp.route('/queue')
 def q_stat():
     return str(q.qsize())
+
+
+@bp.route('/active_tasks')
+def active_tasks():
+    return redirect(f'{utils.base()}/_active_tasks')

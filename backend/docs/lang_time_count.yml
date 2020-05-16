@@ -1,13 +1,13 @@
-Get the count of tweets with geo enabled within the given time period.
+Get the language stats within the given time period.
 ---
 tags:
-  - geo
+  - language
 parameters:
   - name: sa
     in: path
     description: SA code (Can be partial)
     required: yes
-    default: 206
+    default: 20604
   - name: start
     in: path
     type: string

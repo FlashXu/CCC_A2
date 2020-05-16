@@ -3,8 +3,7 @@ from flasgger import Swagger
 from auth import auth
 from error_handler import handler as error_handler
 from db import bp as db_blueprint
-from geo import bp as geo_blueprint
-from language import bp as lang_blueprint
+from count import geo_bp as geo_blueprint, lang_bp as lang_blueprint
 from utils import template, swagger_config
 
 app = Flask(__name__)
