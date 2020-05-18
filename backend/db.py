@@ -57,7 +57,7 @@ def on_exit():
         f'Put back {sum([r[0] for r in result])} users from queue to db.')
 
 
-db = utils.db(name='priority_user')
+db = utils.db(name='users')
 on_startup()
 
 

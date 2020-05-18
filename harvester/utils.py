@@ -56,7 +56,7 @@ def api(index=None, wait_on_rate_limit=True, wait_on_rate_limit_notify=True, tok
     return tweepy.API(auth, wait_on_rate_limit=wait_on_rate_limit, wait_on_rate_limit_notify=wait_on_rate_limit_notify)
 
 
-def db(name='tweet', url='172.26.131.114:5984', username='admin', password='admin'):
+def db(name='tweets', url='172.26.131.114:5984', username='admin', password='admin'):
     return couchdb.Server(f'http://{username}:{password}@{url}').__getitem__(name)
 
 

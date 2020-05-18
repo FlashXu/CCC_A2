@@ -12,6 +12,13 @@
     owner: "{{ ansible_user }}"
     group: "{{ ansible_user }}"
 
+- name: copy configure file | local.ini
+  template:
+    src: local.ini.j2
+    dest: "{{ db_dir }}/local.ini"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+
 - name: run docker compose
   tags: couchdb
   docker_compose:
@@ -24,7 +31,7 @@
 
 - name: wait for db start up
   wait_for:
-    port: 5984
+    port: '{{ db_port }}'
     timeout: 10
 
 - name: copy cluster setup file

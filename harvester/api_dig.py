@@ -56,7 +56,7 @@ class Counter:
         self.maximum = max(self.maximum, self.rate())
 
     def promote(self, threshold=5):
-        return self.geo > 20 or self.maximum >= threshold or self.rate() >= self.threshold
+        return self.geo >= 10 or self.maximum >= threshold or self.rate() >= self.threshold
 
 
 # consumer
@@ -73,8 +73,12 @@ def search(n):
             for statuses in utils.split_every(user_tweets(api, user['_id']), 100):
                 parsed_data = utils.bulk_parse_tweet(
                     [s._json for s in statuses])
-                result = db.update(parsed_data)
-                success = sum([r[0] for r in result])
+                
+                if parsed_data:
+                    result = db.update(parsed_data)
+                    success = sum([r[0] for r in result])
+                else:
+                    success = 0
 
                 counter.update(len(parsed_data), len(statuses))
 
@@ -95,7 +99,7 @@ def search(n):
         except Exception as e:
             msg = str(e)
             print(user, msg)
-            if any([m in msg for m in ['Max retries exceeded', 'Connection', 'code', 'payload']]):
+            if any([m in msg for m in ['Max retries exceeded', 'Connection', 'payload']]):
                 user['searched'] = False
             else:
                 user['searched'] = msg
@@ -137,7 +141,7 @@ if __name__ == "__main__":
     db_ip = '172.26.131.114:5984'
 
     db = utils.db(url=db_ip)
-    udb = utils.db(name='priority_user', url=db_ip)
+    udb = utils.db(name='users', url=db_ip)
 
     stop = Event()
     main(worker_size)

@@ -10,6 +10,7 @@ services:
       - 9100:9100
     volumes:
       - /data/master:/opt/couchdb/data
+      - {{ db_dir }}/local.ini:/opt/couchdb/etc/local.ini
     environment:
       - COUCHDB_USER={{ db_user }}
       - COUCHDB_PASSWORD={{ db_pwd }}

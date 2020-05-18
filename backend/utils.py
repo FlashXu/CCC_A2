@@ -9,7 +9,7 @@ def base(url='172.26.131.114:5984', username='admin', password='admin'):
     return f'http://{username}:{password}@{url}'
 
 
-def db(name='tweet', url='172.26.131.114:5984', username='admin', password='admin'):
+def db(name='tweets', url='172.26.131.114:5984', username='admin', password='admin'):
     return couchdb.Server(base(url, username, password)).__getitem__(name)
 
 

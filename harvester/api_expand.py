@@ -93,10 +93,10 @@ def main(worker_size):
 
 
 if __name__ == "__main__":
-    worker_size = 60
+    worker_size = 18
     offset = 1 * worker_size
 
-    db = utils.db(name='priority_user', url='172.26.133.133:5984')
+    db = utils.db(name='users', url='172.26.133.133:5984')
     # db = utils.db(name='user', url='45.88.195.224:9001')
     # db = utils.db(url='45.88.195.224:9001')
     stop = Event()

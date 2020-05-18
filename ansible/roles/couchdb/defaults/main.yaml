@@ -1,10 +1,8 @@
 db_dir: /home/ubuntu/couchdb
-db_config_path: '{{ db_dir }}/etc'
-db_version: 3.0.0
-db_share: 4
-db_replica: 3
 cluster_cookie: 'c1604655e22988c3bcd02aedf490567c'
 cluster_communication_port: 9100
 db_user: admin
 db_pwd: admin
-
+db_port: 5984
+db_shard: 6
+db_replica: 2
