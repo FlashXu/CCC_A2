@@ -82,6 +82,7 @@
 import MainFooter from "@/layout/MainFooter";
 import GoogleMapsApiLoader from "google-maps-api-loader";
 import tweetCount from "../../public/GeoJson-Data-master/count.json";
+
 export default {
   name: "maps-page",
   bodyClass: "maps-page",
@@ -282,12 +283,15 @@ export default {
           },
         ],
       });
+
       let incomeLayer = this.loadIncome();
       let populationLayer = this.loadPopulation();
       this.mapLayer = this.loadMapLayer(incomeLayer, populationLayer);
+
       // adding layers into map
       this.mapLayer.setMap(this.map);
     },
+
     loadMapLayer: function(incomeLayer, populationLayer) {
       let maplayer = new google.maps.Data();
       maplayer.loadGeoJson("./GeoJson-Data-master/SA3_2016_AUST_SIM.json", {
@@ -298,6 +302,7 @@ export default {
         let stroke_weight = 0.1;
         let stroke_opacity = 1;
         let fill_opacity = 0;
+
         /* display income attributes using gradient style */
         if (
           feature.getProperty("displayOption") == "income" &&
@@ -308,6 +313,7 @@ export default {
           var delta =
             (feature.getProperty("income") - this.incomeMin) /
             (this.incomeMax - this.incomeMin);
+
           let colorA = [];
           for (var i = 0; i < 3; i++) {
             // calculate an integer color based on the delta
@@ -327,6 +333,7 @@ export default {
           var delta =
             (feature.getProperty("population") - this.populationMin) /
             (this.populationMax - this.populationMin);
+
           let colorA = [];
           for (var i = 0; i < 3; i++) {
             // calculate an integer color based on the delta
@@ -343,6 +350,7 @@ export default {
           fill_opacity = 1;
           stroke_opacity = 0.4;
         }
+
         // final style
         return {
           fillColor: color,
@@ -351,6 +359,7 @@ export default {
           strokeWeight: stroke_weight,
         };
       });
+
       // auto zoom after click one region
       maplayer.addListener("rightclick", (e) => {
         var maker = new google.maps.Marker({
@@ -388,6 +397,7 @@ export default {
             this.incomeMin = income;
           }
         }
+
         if (populationLayer.getFeatureById(e.feature.getId())) {
           let population = populationLayer
             .getFeatureById(e.feature.getId())
@@ -403,6 +413,7 @@ export default {
       });
       return maplayer;
     },
+
     loadTwitterCount: function() {
       this.markers = [];
       for (var key in tweetCount) {
@@ -413,6 +424,7 @@ export default {
           this.tweetMin = tweetCount[key];
         }
       }
+
       for (var key in tweetCount) {
         let feature = this.mapLayer.getFeatureById(key);
         let bounds = new google.maps.LatLngBounds();
@@ -513,6 +525,7 @@ export default {
 #wrapper {
   position: relative;
 }
+
 #container-box {
   position: absolute;
   top: 350px;
@@ -530,11 +543,13 @@ export default {
   right: 30px;
   width: 250px;
 }
+
 .floating-box {
   width: 300px;
   height: 500px;
   overflow: hidden;
 }
+
 .glass {
   margin-left: 0px;
   width: 100%;
@@ -557,6 +572,7 @@ form.example input[type="text"] {
   width: 40%;
   background: black;
 }
+
 form.example button {
   float: left;
   width: 15%;
@@ -568,10 +584,12 @@ form.example button {
   border-left: none;
   cursor: pointer;
 }
+
 form.example button:hover {
   background: white;
   color: black;
 }
+
 form.example::after {
   content: "";
   clear: both;
