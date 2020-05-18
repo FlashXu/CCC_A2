@@ -68,7 +68,7 @@ def summary_with_time(view, sa, start, end, callback):
         s, start, end, group_level=3) for s in zones_start_with(sa)]}
 
     ddoc, view = view.split('/')
-    url = f'{utils.base()}/tweet/_design/{ddoc}/_view/{view}/queries'
+    url = f'{utils.base()}/tweets/_design/{ddoc}/_view/{view}/queries'
     response = requests.post(url, json=queries).content
     results = json.loads(response)['results']
     rows = [r['rows'][0] for r in results if r['rows']]
