@@ -534,8 +534,9 @@ export default {
 }
 #side-button {
   position: absolute;
-  top: 150px;
-  left: 350px;
+  top: 200px;
+  left: 100px;
+  background-color: black;
 }
 #SA3-info {
   position: absolute;
