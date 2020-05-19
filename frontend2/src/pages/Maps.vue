@@ -9,24 +9,18 @@
       <b-button id="side-button" v-b-toggle.sidebar-variant
         >Display options</b-button
       >
-      <b-sidebar
+      <b-sidebar 
         id="sidebar-variant"
         title="Display options"
         bg-variant="dark"
         text-variant="light"
         shadow
       >
-        <div class="px-3 py-2">
-          <b-img
-            src="https://picsum.photos/500/500/?image=54"
-            fluid
-            thumbnail
-          ></b-img>
-        </div>
         <div id="container-box">
           <div class="floating-box">
             <div class="glass">
               <div>
+              
                 <b-dropdown id="dropdown-1" text="Aurin Data">
                   <b-dropdown-item>Age</b-dropdown-item>
                   <b-dropdown-item>Salary</b-dropdown-item>
@@ -47,6 +41,7 @@
                     >Hide Tweets</b-dropdown-item
                   >
                 </b-dropdown>
+                
               </div>
               <div>
                 <form class="example">
@@ -58,11 +53,40 @@
                   <button type="submit">Go</button>
                 </form>
               </div>
+              <div class="search">
+                  <input type="text" id="searchinput" class="searchTerm" placeholder="Please input SA3 code.">
+                  <button type="submit" class="searchButton" v-on:click="godown">
+                    GO
+                  </button>
+                </div>
+                <div class = "chartoptions">
+                <button class="linechartBtn" v-on:click="goLine">
+                          <a id='premium'>Line</a>
+                </button>
+                <button class="piechartBtn" v-on:click="goPie">
+                          <a id='premium'>Pie</a>
+                </button>
+                <button class="barchartBtn" v-on:click="goBar">
+                          <a id='premium'>Bar</a>
+                </button>
+                <button class="radarchartBtn" v-on:click="goRadar">
+                          <a id='premium'>Radar</a>
+                </button>
+                <button class="mixedBtn1" v-on:click="goMixed2">
+                          <a id='premium'>Twitter & Income </a>
+                </button>
+                <button class="mixedBtn2" v-on:click="goMixed1">
+                          <a id='premium'>Twitter & Age</a>
+                </button>
+                <b-img id = "sidebarpic" src="https://picsum.photos/500/500/?image=54" fluid thumbnail></b-img>
+                </div>
             </div>
           </div>
         </div>
       </b-sidebar>
     </div>
+    
+
     <div id="SA3-info" v-if="displayCard">
       <b-card
         bg-variant="dark"
@@ -70,18 +94,53 @@
         text-variant="white"
         class="text-center"
       >
+        <b-card-text>SA Code: {{ sa3_code }}</b-card-text>
         <b-card-text>Area: {{ sa3_name }}</b-card-text>
-        <b-card-text>Mean income: {{ sa3_mean_income }}</b-card-text>
-        <b-card-text>Total population: {{ sa3_total_population }}</b-card-text>
+        <b-card-text>Total Population: {{ sa3_total_population }}</b-card-text>
+
+        <piechart v-if="charttype=='Pie'" :datapath = "piedata" :sa3code = "sa3_code"/>
+        <table v-if="iscontained" id="PopupTable">
+          <tr>
+            <th>Income(AUD$)</th>
+            <th>Num of Twitters</th>
+          </tr>
+          <tr>
+            <td>{{sa3_mean_income}}</td>
+            <td>{{tweetcount}}</td>
+          </tr>
+        </table>
       </b-card>
     </div>
-  </div>
+    <piechart class="piechart" v-if="charttype=='Pie'" :datapath = "piedata" :sa3code = "sa3_code"/>
+    <linechart class="linechart" v-if="charttype=='Line'" :datapath = "linedata" :sa3code = "sa3_code"/>
+    <barchart class="barchart" v-if="charttype=='Bar'" :datapath = "bardata" :sa3code = "sa3_code"/>
+    <radarchart class="radarchart" v-if="charttype=='Radar'" :datapath = "radardata" :sa3code = "sa3_code"/>
+    <mixedchart class="mixedchart" v-if="charttype=='Mixed1'" 
+      :datapath = "radardata" 
+      :sa3code = "sa3_code"
+      :tweetpath = "twtpath"
+      :mixedtype = "charttype"
+    />
+    <mixedchart class="mixedchart" v-if="charttype=='Mixed2'" 
+      :datapath = "radardata" 
+      :sa3code = "sa3_code"
+      :tweetpath = "twtpath"
+      :mixedtype = "charttype"
+    />
+</div>
+  
 </template>
 
 <script>
 import MainFooter from "@/layout/MainFooter";
 import GoogleMapsApiLoader from "google-maps-api-loader";
 import tweetCount from "../../public/GeoJson-Data-master/count.json";
+import datafile from '@/data/AURIN_data.json';
+import piechart from '@/charttype/Piechart.vue';
+import linechart from '@/charttype/Linechart.vue';
+import barchart from '@/charttype/Barchart.vue';
+import radarchart from '@/charttype/Radarchart.vue';
+import mixedchart from '@/charttype/Mixedchart.vue';
 
 export default {
   name: "maps-page",
@@ -93,6 +152,7 @@ export default {
       markers: [],
       displayOption: "income",
       displayCard: false,
+      sa3_code: null,
       sa3_name: null,
       sa3_mean_income: null,
       sa3_total_population:null,
@@ -102,7 +162,26 @@ export default {
       populationMax: -Number.MAX_VALUE,
       tweetMin: Number.MAX_VALUE,
       tweetMax: -Number.MAX_VALUE,
+
+      iscontained: false,
+      tweetcount:0,
+      charttype: "null",
+      piedata: datafile,
+      linedata: datafile,
+      bardata: datafile,
+      radardata: datafile,
+      mixeddata:datafile,
+      mixedtype: "null",
+      twtpath: tweetCount
+
     };
+  },
+  components:{
+    piechart,
+    linechart,
+    barchart,
+    radarchart,
+    mixedchart
   },
   methods: {
     initMap: function() {
@@ -375,14 +454,33 @@ export default {
       });
       maplayer.addListener("mouseover", (e) => {
         this.displayCard = true;
+        this.sa3_code = e.feature.getProperty("SA3_CODE16");
         this.sa3_name = e.feature.getProperty("SA3_NAME16");
-        this.sa3_total_population = e.feature.getProperty("population");
+        this.sa3_total_population = datafile[this.sa3_code]["total_num"];
         this.sa3_mean_income = e.feature.getProperty("income");
+        this.tweetcount = tweetCount[this.sa3_code]
         e.feature.setProperty("isColorful", true);
+
+        
+        if(datafile.hasOwnProperty(this.sa3_code)){
+          this.iscontained = false;
+          this.charttype = "null";
+
+          this.$nextTick(() => {
+                this.iscontained = true;
+                this.charttype = "Pie";  
+            })
+        }else{
+          this.iscontained = false;
+          this.charttype = "null";
+
+        }
       });
       maplayer.addListener("mouseout", (e) => {
         this.displayCard = false;
         e.feature.setProperty("isColorful", false);
+        this.iscontained = false;
+          this.charttype = "null";
       });
       maplayer.addListener("addfeature", (e) => {
         if (incomeLayer.getFeatureById(e.feature.getId())) {
@@ -509,6 +607,86 @@ export default {
         feature.setProperty("displayOption", "population");
       });
     },
+    goPie(){
+      var searchbox = document.getElementById("searchinput");
+      this.sa3_code = searchbox.value.toString();
+      this.charttype = "null";
+      this.$nextTick(() => {
+                this.charttype = "Pie";  
+            })
+    },
+    goLine(){
+      var searchbox = document.getElementById("searchinput");
+      this.sa3_code = searchbox.value.toString();
+      this.charttype = "null";
+      this.$nextTick(() => {
+                this.charttype = "Line";  
+            })
+    },
+    goBar(){
+      var searchbox = document.getElementById("searchinput");
+      this.sa3_code = searchbox.value.toString();
+      this.charttype = "null";
+      this.$nextTick(() => {
+                this.charttype = "Bar";  
+            })
+    },
+    goRadar(){
+      var searchbox = document.getElementById("searchinput");
+      this.sa3_code = searchbox.value.toString();
+      this.charttype = "null";
+      this.$nextTick(() => {
+                this.charttype = "Radar";  
+            })
+    },
+    goMixed1(){
+      var searchbox = document.getElementById("searchinput");
+      this.sa3_code = searchbox.value.toString();
+      this.charttype = "null";
+      this.$nextTick(() => {
+                this.charttype = "Mixed1";  
+            })
+    },
+    goMixed2(){
+      var searchbox = document.getElementById("searchinput");
+      this.sa3_code = searchbox.value.toString();
+      this.charttype = "null";
+      this.$nextTick(() => {
+                this.charttype = "Mixed2";  
+            })
+    },
+    godown(){
+      var type = this.charttype;
+      this.charttype = "null";
+
+      this.$nextTick(() => {
+                var searchbox = document.getElementById("searchinput");
+                this.sa3_code = searchbox.value.toString();
+                switch(type){
+                  case "Pie":
+                  case "null":
+                    this.charttype = "Pie";
+                    break;
+                  case "Line":
+                    this.charttype = "Line";
+                    break;
+                  case "Bar":
+                    this.charttype = "Bar";
+                    break;
+                  case "Radar":
+                    this.charttype = "Radar";
+                    break;
+                  case "Mixed1":
+                    this.charttype = "Mixed1";
+                    break;
+                  case "Mixed2":
+                    this.charttype = "Mixed2";
+                    break;
+                }
+            })
+      var scrollingElement = document.scrollingElement;
+      scrollingElement.scrollTop = scrollingElement.scrollHeight;
+    }
   },
   mounted() {
     const googleMapApi = GoogleMapsApiLoader({
@@ -521,22 +699,36 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
+@import "../assets/css/popups.css";
+@import "../assets/css/chartstyle.css";
+@import "../assets/css/btnstyle.css";
+@import "../assets/css/tablestyle.css";
+
 #wrapper {
   position: relative;
 }
 
 #container-box {
   position: absolute;
-  top: 350px;
+  top: 50px;
   left: 30px;
   z-index: 99;
 }
 #side-button {
   position: absolute;
-  top: 200px;
+  top: 150px;
   left: 100px;
   background-color: black;
+}
+#sidebarpic{
+  position: relative;
+  width: 250px;
+  height: 220px;
+
+  margin-top:10px;
+
+
 }
 #SA3-info {
   position: absolute;
@@ -596,4 +788,5 @@ form.example::after {
   clear: both;
   display: table;
 }
+
 </style>

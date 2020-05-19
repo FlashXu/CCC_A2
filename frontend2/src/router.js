@@ -7,6 +7,12 @@ import Login from './pages/Login.vue';
 import Profile from './pages/Profile.vue';
 import MainNavbar from './layout/MainNavbar.vue';
 import MainFooter from './layout/MainFooter.vue';
+import Linechart from './charttype/Linechart.vue'
+import Piechart from './charttype/Piechart.vue'
+import Barchart from './charttype/Barchart.vue'
+import Radarchart from './charttype/Radarchart.vue'
+import Mixedchart from './charttype/Mixedchart.vue'
+
 
 Vue.use(Router);
 
@@ -56,6 +62,31 @@ export default new Router({
         header: { colorOnScroll: 400 },
         footer: { backgroundColor: 'black' }
       }
+    },
+    {
+      path: '/linechart',
+      name:'line',
+      component: Linechart,
+    },
+    {
+      path: '/piechart',
+      name:'pie',
+      component: Piechart
+    },
+    {
+      path: '/barchart',
+      name:'bar',
+      component: Barchart
+    },
+    {
+      path: '/radarchart',
+      name:'radar',
+      component: Radarchart
+    },
+    {
+      path: '/mixedchart',
+      name:'mixed',
+      component: Mixedchart
     }
   ],
   scrollBehavior: to => {
