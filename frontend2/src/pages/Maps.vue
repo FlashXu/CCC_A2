@@ -44,14 +44,15 @@
                 
               </div>
               <div>
-                <form class="example">
-                  <input
-                    type="text"
-                    placeholder="Track user by ID.."
-                    name="search2"
-                  />
-                  <button type="submit">Go</button>
-                </form>
+                <button type="submit" id = "changemode" class="switchButton" v-on:click="changeMode">Dynamic</button>
+              </div>
+              <div class = "timesearch">
+                <input type="text" id="starttime" class="search_time" placeholder="2014-01-23">
+                <p> ~ </p>
+                <input type="text" id="endtime" class="search_time" placeholder="2018-09-10">
+                <button type="submit" class="searchtimeButton" v-on:click="changeDate()">
+                    GO
+                </button>
               </div>
               <div class="search">
                   <input type="text" id="searchinput" class="searchTerm" placeholder="Please input SA3 code.">
@@ -98,6 +99,7 @@
         <b-card-text>Area: {{ sa3_name }}</b-card-text>
         <b-card-text>Total Population: {{ sa3_total_population }}</b-card-text>
 
+        <div v-if= "currentmode=='Static'">
         <piechart v-if="charttype=='Pie'" :datapath = "piedata" :sa3code = "sa3_code"/>
         <table v-if="iscontained" id="PopupTable">
           <tr>
@@ -109,6 +111,20 @@
             <td>{{tweetcount}}</td>
           </tr>
         </table>
+      </div>
+
+      <div v-if= "currentmode=='Dynamic'">
+        <barchart v-if="charttype=='godyn'" :datapath = "currenttwt" :sa3code = "sa3_code"/>
+        <table id="PopupTable" v-if="charttype=='godyn'">
+          <tr>
+            <th>Num of Twitters</th>
+          </tr>
+          <tr>
+            <td>{{currenttwt.twtnum}}</td>
+          </tr>
+        </table>
+      </div>
+
       </b-card>
     </div>
     <piechart class="piechart" v-if="charttype=='Pie'" :datapath = "piedata" :sa3code = "sa3_code"/>
@@ -172,8 +188,10 @@ export default {
       radardata: datafile,
       mixeddata:datafile,
       mixedtype: "null",
-      twtpath: tweetCount
+      twtpath: tweetCount,
 
+      currentmode:"Static",
+      currenttwt:{},
     };
   },
   components:{
@@ -440,6 +458,25 @@ export default {
       });
 
       // auto zoom after click one region
+      maplayer.addListener("click", (e) => {
+        this.displayCard = true;
+        this.sa3_code = e.feature.getProperty("SA3_CODE16");
+        this.sa3_name = e.feature.getProperty("SA3_NAME16");
+        this.sa3_total_population = e.feature.getProperty("population");
+        this.sa3_mean_income = e.feature.getProperty("income");
+        this.tweetcount = tweetCount[this.sa3_code]
+        e.feature.setProperty("isColorful", true);
+
+        if(this.currentmode == "Dynamic"){
+          var currenttwt = this.$options.methods.getHttp(this.sa3_code)
+          this.currenttwt = currenttwt;
+
+          this.charttype = "null";
+          this.$nextTick(() => {
+                this.charttype = "godyn";  
+            })
+        }
+      });
       maplayer.addListener("rightclick", (e) => {
         var maker = new google.maps.Marker({
           position: e.latLng,
@@ -456,11 +493,12 @@ export default {
         this.displayCard = true;
         this.sa3_code = e.feature.getProperty("SA3_CODE16");
         this.sa3_name = e.feature.getProperty("SA3_NAME16");
-        this.sa3_total_population = datafile[this.sa3_code]["total_num"];
+        this.sa3_total_population = e.feature.getProperty("population");
         this.sa3_mean_income = e.feature.getProperty("income");
         this.tweetcount = tweetCount[this.sa3_code]
         e.feature.setProperty("isColorful", true);
 
+        if(this.currentmode == "Static"){
         
         if(datafile.hasOwnProperty(this.sa3_code)){
           this.iscontained = false;
@@ -474,6 +512,7 @@ export default {
           this.iscontained = false;
           this.charttype = "null";
 
+        }
         }
       });
       maplayer.addListener("mouseout", (e) => {
@@ -655,6 +694,74 @@ export default {
                 this.charttype = "Mixed2";  
             })
     },
+    changeMode(){
+      var nextmode = document.getElementById("changemode");
+      if(nextmode.innerHTML == "Dynamic"){
+        nextmode.innerHTML = "Static";
+        this.currentmode = "Dynamic";
+      }else{
+        nextmode.innerHTML = "Dynamic";
+        this.currentmode = "Static";
+      }
+
+    },
+    changeDate(){
+      var start_time = document.getElementById("starttime").value.toString(); 
+      if (start_time == ""){
+          document.getElementById("starttime").value = "2014-01-23";
+          start_time = "2014-01-23";
+        }
+        var end_time = document.getElementById("endtime").value.toString(); 
+      if (end_time == ""){
+          document.getElementById("endtime").value = "2018-09-10";
+          end_time = "2018-09-10";
+        }
+    },
+
+    getHttp(currentsacode){
+      var nextmode = document.getElementById("changemode");
+      if(nextmode.innerHTML == "Static"){
+        var xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState == 4 && xhr.status == 200) {
+                var res= xhr.responseText;
+                return res;
+        
+            }
+        };
+        // Get Tweet Number.
+        // Send requests to proxy serve to fail cors.
+   
+        var start_time = document.getElementById("starttime").value.toString(); 
+        if (start_time == ""){
+          document.getElementById("starttime").value = "2014-01-23";
+          start_time = "2014-01-23";
+        }
+        var end_time = document.getElementById("endtime").value.toString(); 
+        if (end_time == ""){
+          document.getElementById("endtime").value = "2018-09-10";
+          end_time = "2018-09-10";
+        }
+        var url1 = 'https://cors-anywhere.herokuapp.com/http://45.88.195.224:5000/geo/' + currentsacode + '/' + start_time + '/' + end_time +'/?detail=false';
+        var url2 = 'https://cors-anywhere.herokuapp.com/http://45.88.195.224:5000/lang/' + currentsacode + '/' + start_time + '/' + end_time +'/?detail=false';
+
+
+        xhr.open('GET', url1, false);
+        xhr.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
+        xhr.send();
+        var tweetnum = JSON.parse(xhr.onreadystatechange())[currentsacode];
+
+        xhr.open('GET', url2, false);
+        xhr.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
+        xhr.send();
+        var lang = JSON.parse(xhr.onreadystatechange())[currentsacode];
+
+        var currenttwt ={};
+        currenttwt.twtnum =  tweetnum;       
+        currenttwt.lang =  lang; 
+        return currenttwt;   
+      }
+    },
     godown(){
       var type = this.charttype;
       this.charttype = "null";
@@ -724,7 +831,7 @@ export default {
 #sidebarpic{
   position: relative;
   width: 250px;
-  height: 220px;
+  height: 180px;
 
   margin-top:10px;
 

@@ -2,7 +2,7 @@
   width: 80%;
   position: relative;
   display: flex;
-  margin-top: 10px;
+  margin-top: 5px;
   margin-bottom: 5px;
 }
 
@@ -20,6 +20,64 @@
 .searchTerm:focus{
   color: #00B4CC;
 }
+
+
+.timesearch {
+  width: 80%;
+  position: relative;
+  display: flex;
+  margin-top: 10px;
+  margin-bottom: 5px;
+}
+
+.search_time {
+  width: 40%;
+  border: 3px solid #00B4CC;
+  padding: 5px;
+  height: 36px;
+  border-radius: 5px 0 0 5px;
+  outline: none;
+  color: #9DBFAF;
+  
+}
+
+.search_time:focus{
+  color: #00B4CC;
+}
+
+.searchtimeButton {
+  width: 50px;
+  height: 36px;
+  outline: none;
+  border: 1px solid #00B4CC;
+  background: #00B4CC;
+  text-align: center;
+  color: #fff;
+  border-radius: 0 5px 5px 0;
+  cursor: pointer;
+  font-size: 25px;
+  font-family:unicorn;
+}
+
+.switchButton {
+  outline: none;
+  width: 100px;
+  height: 36px;
+  outline: none;
+  border: 3px solid #fff;
+  background: #00B4CC;
+  text-align: center;
+  color: #fff;
+  border-radius: 4em;
+  cursor: pointer;
+  font-size: 30px;
+  line-height: 25px;
+  font-family:unicorn;
+}
+
+
+
+
 
 .searchButton {
   width: 50px;

@@ -11,14 +11,14 @@ export default {
     }
   },
   mounted() {
-        var strs = new Array(); 
+    var strs = new Array(); 
     strs = this.sa3code.split(","); 
     
     var input_dataset = [];
     var instance = {};
     var bgColor = ["#ff6384","#36a2eb", "#ffcd56", "#60ffb7", "#e34722", "#3069cd",
                     "#e253ea", "#bde944", "#1da375", "#ae7006"];
-
+                    
     for (var i = 0; i < strs.length; i++) { 
     instance = {};
     
@@ -29,13 +29,13 @@ export default {
     
     instance['label'] = this.datapath[strs[i]].sa3name;
     input_dataset[i] = instance;   
- }
+    }
     
     var piedata = {
       labels: ["Number of Teenagers", "Number of Middle-aged", "Number of The Old"],
       datasets: input_dataset
     }
-
+    
     var options ={
        tooltips: {
         custom: function(tooltip) {
