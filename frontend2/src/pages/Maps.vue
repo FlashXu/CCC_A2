@@ -9,6 +9,22 @@
       <b-button id="side-button" v-b-toggle.sidebar-variant
         >Display options</b-button
       >
+
+      
+      
+      <div id="progress-bar-container">
+          <div class="progress-bar-child progress"></div>
+          <div class="progress-bar-child shrinker timelapse"></div>
+      </div>
+
+      <h7 id="text1">25,000</h7>
+      <h7 id="text2">Population</h7>
+      <h7 id="text3">300,000</h7>
+
+      <h7 id="text4">$50,000</h7>
+      <h7 id="text5">Income</h7>
+      <h7 id="text6">$150,000</h7>
+
       <b-sidebar 
         id="sidebar-variant"
         title="Display options"
@@ -20,7 +36,6 @@
           <div class="floating-box">
             <div class="glass">
               <div>
-              
                 <b-dropdown id="dropdown-1" text="Aurin Data">
                   <b-dropdown-item>Age</b-dropdown-item>
                   <b-dropdown-item>Salary</b-dropdown-item>
@@ -41,11 +56,12 @@
                     >Hide Tweets</b-dropdown-item
                   >
                 </b-dropdown>
-                
               </div>
+
               <div>
                 <button type="submit" id = "changemode" class="switchButton" v-on:click="changeMode">Dynamic</button>
               </div>
+
               <div class = "timesearch">
                 <input type="text" id="starttime" class="search_time" placeholder="2014-01-23">
                 <p> ~ </p>
@@ -54,13 +70,15 @@
                     GO
                 </button>
               </div>
+
               <div class="search">
                   <input type="text" id="searchinput" class="searchTerm" placeholder="Please input SA3 code.">
                   <button type="submit" class="searchButton" v-on:click="godown">
                     GO
                   </button>
-                </div>
-                <div class = "chartoptions">
+              </div>
+
+              <div class = "chartoptions">
                 <button class="linechartBtn" v-on:click="goLine">
                           <a id='premium'>Line</a>
                 </button>
@@ -80,7 +98,7 @@
                           <a id='premium'>Twitter & Age</a>
                 </button>
                 <b-img id = "sidebarpic" src="https://picsum.photos/500/500/?image=54" fluid thumbnail></b-img>
-                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -626,6 +644,7 @@ export default {
           idPropertyName: "sa3_code16",
         }
       );
+
       return populationLayer;
     },
     zoomToMelb: function() {
@@ -822,12 +841,14 @@ export default {
   left: 30px;
   z-index: 99;
 }
+
 #side-button {
   position: absolute;
   top: 150px;
   left: 100px;
   background-color: black;
 }
+
 #sidebarpic{
   position: relative;
   width: 250px;
@@ -896,4 +917,93 @@ form.example::after {
   display: table;
 }
 
+#progress-bar-container {
+	width: 300px;
+	height: 20px;
+	margin: 0 auto;
+	position: absolute;
+	transform: translateY(-50%);
+	border-radius: 35px;
+  overflow: hidden;
+  bottom: 80px;
+  right: 750px;
+}
+
+.progress-bar-child {
+	width: 100%;
+	height: 100%;
+}
+
+.progress {
+	color: white;
+	text-align: center;
+	line-height: 75px;
+	font-size: 35px;
+	font-family: "Segoe UI";
+	animation-direction: reverse;
+	background: #e5405e;
+
+	/* Chrome10-25,Safari5.1-6 */
+	background: linear-gradient(to right, #3fffa2 0%, #ffdb3a 45%, #e5405e 100%);
+}
+
+.shrinker {
+	background-color: gray;
+	position: absolute;
+	top: 0;
+	right: 0;
+	width: 100%;
+}
+
+.timelapse {
+	animation-name: timelapse;
+	animation-fill-mode: forwards;
+	animation-duration: 2s;
+	animation-timing-function: cubic-bezier(.86, .05, .4, .96);
+}
+
+@keyframes timelapse {
+	0% {
+		width: 100%;
+	}
+	100% {
+		width: 0%;
+	}
+}
+
+#text1 {
+  position: absolute;
+  bottom: 110px;
+  left: 700px;
+}
+
+#text2 {
+  position: absolute;
+  bottom: 110px;
+  left: 850px;
+}
+
+#text3 {
+  position: absolute;
+  bottom: 110px;
+  left: 1000px;
+}
+
+#text4 {
+  position: absolute;
+  bottom: 70px;
+  left: 700px;
+}
+
+#text5 {
+  position: absolute;
+  bottom: 70px;
+  left: 860px;
+}
+
+#text6 {
+  position: absolute;
+  bottom: 70px;
+  left: 1000px;
+}
 </style>
