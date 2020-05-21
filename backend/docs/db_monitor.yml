@@ -1,0 +1,15 @@
+This is the monitor of the database.
+---
+tags:
+  - db
+parameters:
+  - in: path
+    name: level
+    description: Aggregate level of user tree
+    enum: [1, 2]
+    default: 1
+    required: true
+responses:
+  200:
+    description: Number of documents in the database,
+     and the worker status of timeline miner.

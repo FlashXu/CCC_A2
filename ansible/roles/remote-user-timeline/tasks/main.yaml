@@ -1,0 +1,40 @@
+- name: create directory
+  file:
+    path: '{{ tweet_dir }}'
+    state: directory
+
+- name: copy files
+  copy:
+    src: '../../../harvester/{{ item }}'
+    dest: '{{ tweet_dir }}'
+  with_items:
+    - api_dig.py
+    - utils.py
+    - requirement.txt
+    - tokens.py
+    - Dockerfile
+
+  
+- name: build Docker image
+  docker_image:
+    name: timeline
+    build:
+      path: '{{ tweet_dir }}'
+      pull: yes
+    source: build
+    force_source: yes
+    tag: v2
+
+- name: start container
+  docker_container:
+    name: timeline
+    image: timeline:v2
+    log_driver: json-file
+    log_options:
+      max-size: 10m
+    state: stopped
+    restart: yes
+    env:
+      INDEX: '{{ groups["all"].index(inventory_hostname) }}'
+    volumes:
+      - '{{ tweet_dir }}:/workspace'

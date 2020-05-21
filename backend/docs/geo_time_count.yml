@@ -1,0 +1,34 @@
+Get the count of tweets with geo enabled within the given time period.
+---
+tags:
+  - geo
+parameters:
+  - name: sa
+    in: path
+    description: SA code (Can be partial)
+    required: yes
+    default: 206
+  - name: start
+    in: path
+    type: string
+    description: start of the time interval
+    required: yes
+    default: '2014-01-23'
+  - name: end
+    in: path
+    type: string
+    description: end of the time interval
+    required: yes
+    default: '2018-09-10'
+  - name: detail
+    in: query
+    type: boolean
+    description: whether the returned data should aggregated with level SA2
+    required: no
+    default: yes
+responses:
+  200:
+    description: OK
+  400:
+    description: Invalid parameters were given
+    

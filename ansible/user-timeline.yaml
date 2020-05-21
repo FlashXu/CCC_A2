@@ -1,0 +1,12 @@
+- hosts: all
+  become: yes
+  # gather_subset: min
+  gather_facts: no
+
+  vars_files:
+    - host_vars/remote_vars.yaml
+
+  roles:
+    # - role: remote-common
+    # - role: remote-install-docker
+    - role: remote-user-timeline

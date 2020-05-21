@@ -2,3 +2,4 @@ __pycache__
 openrc.sh
 .DS_Store
 frontend2/node_modules/
+.idea

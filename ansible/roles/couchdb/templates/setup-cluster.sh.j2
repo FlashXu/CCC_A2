@@ -1,0 +1,15 @@
+#!bin/bash
+
+{% for node in groups['db_slave'] %}
+{% set ip = hostvars[node]['ansible_default_ipv4']['address'] %}
+# node {{ node }} {{ ip }}
+curl -X POST -H "Content-Type: application/json" http://{{ db_user }}:{{ db_pwd }}@127.0.0.1:5984/_cluster_setup -d '{"action": "enable_cluster", "bind_address":"0.0.0.0", "username": "{{ db_user }}", "password":"{{ db_pwd }}", "port": 5984, "node_count": "3", "remote_node": "{{ ip }}", "remote_current_user": "{{ db_user }}", "remote_current_password": "{{ db_pwd }}" }'
+curl -X POST -H "Content-Type: application/json" http://{{ db_user }}:{{ db_pwd }}@127.0.0.1:5984/_cluster_setup -d '{"action": "add_node", "host":"{{ ip }}", "port": 5984, "username": "{{ db_user }}", "password":"{{ db_pwd }}"}'
+{% endfor %}
+
+# access it before finish cluster setup to avoid bug #2797
+# https://github.com/apache/couchdb/issues/2797
+curl -s 127.0.0.1:5984/ > /dev/null
+
+# finish setup
+curl -X POST -H "Content-Type: application/json" http://{{ db_user }}:{{ db_pwd }}@127.0.0.1:5984/_cluster_setup -d '{"action": "finish_cluster"}'

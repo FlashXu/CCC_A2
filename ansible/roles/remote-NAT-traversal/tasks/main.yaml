@@ -20,6 +20,22 @@
     daemon_reload: yes
     state: restarted
 
+- name: docker container proxy | create directory
+  file:
+    path: '{{ item }}/.docker/'
+    state: directory
+  with_items:
+    - /root
+    - /home/ubuntu
+
+- name: docker container proxy | add proxy settings
+  copy:
+    src: config.json
+    dest: '{{ item }}/.docker/'
+  with_items:
+    - /root
+    - /home/ubuntu 
+
 - name: frp | create directory for archieve
   file:
     path: '/tmp/frp'
@@ -59,6 +75,6 @@
   systemd:
     daemon_reload: yes
     enabled: yes
-    state: restarted
+    state: started
     name: 'frpc_{{ item.name }}'
   loop: '{{ frp_server }}'

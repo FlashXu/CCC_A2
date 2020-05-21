@@ -21,3 +21,16 @@ remote_port = {{ 9000 + ansible_nodename[-1]|int }}
 type = http
 local_port = 5984
 subdomain = couchdb{{ ansible_nodename[-1] }}
+
+{% if ansible_nodename == 'instance4'  %}
+[flask-backend]
+type = tcp
+local_ip = 127.0.0.1
+local_port = 5000
+remote_port = 5000
+
+[flask-http-backend]
+type = http
+local_port = 5000
+subdomain = flask
+{% endif %}
