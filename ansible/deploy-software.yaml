@@ -1,6 +1,6 @@
 - hosts: instance4
   become: yes
-  gather_facts: no
+  gather_subset: min
 
   vars_files:
     - host_vars/remote_vars.yaml

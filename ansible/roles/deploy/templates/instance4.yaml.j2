@@ -3,11 +3,11 @@ version: '3'
 services:
   backend:
     container_name: backend
-    build: {{ working_dir }}/backend
+    build: backend
     ports: 
       - 5000:5000
     volumes:
-      - {{ working_dir }}/backend:/code
+      - backend:/code
     depends_on:
       - redis
     logging:
@@ -22,7 +22,7 @@ services:
     
   frontend:
     container_name: frontend
-    build: {{ working_dir }}/frontend2
+    build: frontend2
     ports:
       - 80:80
     restart: always
