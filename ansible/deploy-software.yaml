@@ -1,0 +1,10 @@
+- hosts: instance4
+  become: yes
+  gather_facts: no
+
+  vars_files:
+    - host_vars/remote_vars.yaml
+
+  roles:
+    - role: remote-git-pull
+    - role: deploy

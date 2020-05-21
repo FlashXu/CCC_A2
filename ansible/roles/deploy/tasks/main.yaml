@@ -1,0 +1,15 @@
+- name: copy configure file
+  template:
+    src: "{{ ansible_nodename }}.yaml.j2"
+    dest: "{{ working_dir }}/docker-compose.yaml"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+
+- name: run docker compose
+  docker_compose:
+    project_src: "{{ working_dir }}"
+    pull: yes
+    # state: absent
+    remove_orphans: yes
+    remove_volumes: yes
+    recreate: always

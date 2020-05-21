@@ -76,6 +76,7 @@ instances:
   - name: instance4
     security_groups: 
       - backend
+      - http
     volume:
       name: volume4
       size: 10

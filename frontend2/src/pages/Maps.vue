@@ -598,7 +598,7 @@ export default {
           strokeColor: "white",
           strokeWeight: 0.5,
         };
-        console.log("size:", size);
+        // console.log("size:", size);
         var marker = new google.maps.Marker({
           position: center,
           icon: circleMarker,
@@ -761,8 +761,8 @@ export default {
           document.getElementById("endtime").value = "2018-09-10";
           end_time = "2018-09-10";
         }
-        var url1 = 'https://cors-anywhere.herokuapp.com/http://45.88.195.224:5000/geo/' + currentsacode + '/' + start_time + '/' + end_time +'/?detail=false';
-        var url2 = 'https://cors-anywhere.herokuapp.com/http://45.88.195.224:5000/lang/' + currentsacode + '/' + start_time + '/' + end_time +'/?detail=false';
+        var url1 = 'https://cors-anywhere.herokuapp.com/http://localhost:5000/geo/' + currentsacode + '/' + start_time + '/' + end_time +'/?detail=false';
+        var url2 = 'https://cors-anywhere.herokuapp.com/http://localhost:5000/lang/' + currentsacode + '/' + start_time + '/' + end_time +'/?detail=false';
 
 
         xhr.open('GET', url1, false);
