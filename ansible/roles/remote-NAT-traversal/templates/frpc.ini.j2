@@ -33,4 +33,15 @@ remote_port = 5000
 type = http
 local_port = 5000
 subdomain = flask
+
+[vue-frontend]
+type = tcp
+local_ip = 127.0.0.1
+local_port = 8080
+remote_port = 8080
+
+[vue-http-frontend]
+type = http
+local_port = 8080
+subdomain = vue
 {% endif %}
