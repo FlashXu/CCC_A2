@@ -7,7 +7,7 @@ services:
     ports: 
       - 5000:5000
     volumes:
-      - backend:/code
+      - ./backend:/code
     depends_on:
       - redis
     logging:
