@@ -10,23 +10,22 @@
         >Display options</b-button
       >
 
-      
-      <div class = "tempbar">
-      <div id="progress-bar-container">
+      <div class="tempbar">
+        <div id="progress-bar-container">
           <div class="progress-bar-child progress"></div>
           <div class="progress-bar-child shrinker timelapse"></div>
+        </div>
+
+        <p id="text1">25,000</p>
+        <p id="text2">Population</p>
+        <p id="text3">300,000</p>
+
+        <p id="text4">$50,000</p>
+        <p id="text5">Income</p>
+        <p id="text6">$150,000</p>
       </div>
 
-      <p id="text1">25,000</p>
-      <p id="text2">Population</p>
-      <p id="text3">300,000</p>
-
-      <p id="text4">$50,000</p>
-      <p id="text5">Income</p>
-      <p id="text6">$150,000</p>
-      </div>
-
-      <b-sidebar 
+      <b-sidebar
         id="sidebar-variant"
         title="Display options"
         bg-variant="dark"
@@ -47,12 +46,21 @@
                   <b-dropdown-item @click="displayPopulation"
                     >Population</b-dropdown-item
                   >
+                  <b-dropdown-item @click="displayTourism"
+                    >Tourism</b-dropdown-item
+                  >
+                  <b-dropdown-item @click="hideDisplay"
+                    >Hide Aurin Data</b-dropdown-item
+                  >
                   <b-dropdown-item @click="zoomToMelb"
                     >Melbourne</b-dropdown-item
                   >
-                  <b-dropdown-item @click="zoomToSydn"
-                    >Sydney</b-dropdown-item
-                  >
+                  <b-dropdown-item @click="zoomToSydn">Sydney</b-dropdown-item>
+                </b-dropdown>
+              </div>
+
+              <div>
+                <b-dropdown id="dropdown-1" text="Twitter Data">
                   <b-dropdown-item @click="loadTwitterCount"
                     >Tweets</b-dropdown-item
                   >
@@ -63,53 +71,84 @@
               </div>
 
               <div>
-                <button type="submit" id = "changemode" class="switchButton" v-on:click="changeMode">Dynamic</button>
-                <p  class = "modetext">Current Mode: {{currentmode}}</p>
+                <button
+                  type="submit"
+                  id="changemode"
+                  class="switchButton"
+                  v-on:click="changeMode"
+                >
+                  Dynamic
+                </button>
+                <p class="modetext">Current Mode: {{ currentmode }}</p>
               </div>
 
-              <div class = "timesearch" v-if= "currentmode=='Dynamic'">
-                <input type="text" id="starttime" class="search_time" placeholder="2014-01-23">
-                <p> ~ </p>
-                <input type="text" id="endtime" class="search_time" placeholder="2018-09-10">
-                <button type="submit" class="searchtimeButton" v-on:click="changeDate()">
-                    GO
+              <div class="timesearch" v-if="currentmode == 'Dynamic'">
+                <input
+                  type="text"
+                  id="starttime"
+                  class="search_time"
+                  placeholder="2014-01-23"
+                />
+                <p>~</p>
+                <input
+                  type="text"
+                  id="endtime"
+                  class="search_time"
+                  placeholder="2018-09-10"
+                />
+                <button
+                  type="submit"
+                  class="searchtimeButton"
+                  v-on:click="changeDate()"
+                >
+                  GO
                 </button>
               </div>
 
               <div class="search">
-                  <input type="text" id="searchinput" class="searchTerm" placeholder="Please input SA3 code." v-on:keyup.enter="godown">
-                  <button type="submit" class="searchButton" v-on:click="godown">
-                    GO
-                  </button>
+                <input
+                  type="text"
+                  id="searchinput"
+                  class="searchTerm"
+                  placeholder="Please input SA3 code."
+                  v-on:keyup.enter="godown"
+                />
+                <button type="submit" class="searchButton" v-on:click="godown">
+                  GO
+                </button>
               </div>
 
-              <div class = "chartoptions">
+              <div class="chartoptions">
                 <button class="linechartBtn" v-on:click="goLine">
-                          <a id='premium'>Line</a>
+                  <a id="premium">Line</a>
                 </button>
                 <button class="piechartBtn" v-on:click="goPie">
-                          <a id='premium'>Pie</a>
+                  <a id="premium">Pie</a>
                 </button>
                 <button class="barchartBtn" v-on:click="goBar">
-                          <a id='premium'>Bar</a>
+                  <a id="premium">Bar</a>
                 </button>
                 <button class="radarchartBtn" v-on:click="goRadar">
-                          <a id='premium'>Radar</a>
+                  <a id="premium">Radar</a>
                 </button>
                 <button class="mixedBtn1" v-on:click="goMixed2">
-                          <a id='premium'>Tweets & Income </a>
+                  <a id="premium">Tweets & Income </a>
                 </button>
                 <button class="mixedBtn2" v-on:click="goMixed1">
-                          <a id='premium'>Tweets & Age</a>
+                  <a id="premium">Tweets & Age</a>
                 </button>
-                <b-img id = "sidebarpic" src="https://picsum.photos/500/500/?image=54" fluid thumbnail></b-img>
+                <b-img
+                  id="sidebarpic"
+                  src="https://picsum.photos/500/500/?image=54"
+                  fluid
+                  thumbnail
+                ></b-img>
               </div>
             </div>
           </div>
         </div>
       </b-sidebar>
     </div>
-    
 
     <div id="SA3-info" v-if="displayCard">
       <b-card
@@ -120,69 +159,101 @@
       >
         <b-card-text>SA Code: {{ sa3_code }}</b-card-text>
         <b-card-text>Area: {{ sa3_name }}</b-card-text>
-        <b-card-text v-if="sa3_total_population != null">Total Population: {{ sa3_total_population }}</b-card-text>
+        <b-card-text v-if="sa3_total_population != null"
+          >Total Population: {{ sa3_total_population }}</b-card-text
+        >
 
-        <div v-if= "currentmode=='Static'">
-        <piechart v-if="popupcharttype=='Pie'" :datapath = "piedata" :sa3code = "sa3_code"/>
-        <table v-if="iscontained" id="PopupTable">
-          <tr>
-            <th>Income(AUD$)</th>
-            <th>Num of Tweets</th>
-          </tr>
-          <tr>
-            <td>{{sa3_mean_income}}</td>
-            <td>{{tweetcount}}</td>
-          </tr>
-        </table>
-      </div>
+        <div v-if="currentmode == 'Static'">
+          <piechart
+            v-if="popupcharttype == 'Pie'"
+            :datapath="piedata"
+            :sa3code="sa3_code"
+          />
+          <table v-if="iscontained" id="PopupTable">
+            <tr>
+              <th>Income(AUD$)</th>
+              <th>Num of Tweets</th>
+            </tr>
+            <tr>
+              <td>{{ sa3_mean_income }}</td>
+              <td>{{ tweetcount }}</td>
+            </tr>
+          </table>
+        </div>
 
-      <div v-if= "currentmode=='Dynamic'">
-        <barchart v-if="popupcharttype=='godyn'" :datapath = "currenttwt" :sa3code = "sa3_code"/>
-        <table id="PopupTable" v-if="popupcharttype=='godyn'">
-          <tr>
-            <th>Num of Tweets</th>
-            <th>Num of En Tweets</th>
-          </tr>
-          <tr>
-            <td>{{currenttwt.twtnum}}</td>
-            <td>{{currenttwt.lang.en}}</td>
-          </tr>
-        </table>
-      </div>
-
+        <div v-if="currentmode == 'Dynamic'">
+          <barchart
+            v-if="popupcharttype == 'godyn'"
+            :datapath="currenttwt"
+            :sa3code="sa3_code"
+          />
+          <table id="PopupTable" v-if="popupcharttype == 'godyn'">
+            <tr>
+              <th>Num of Tweets</th>
+              <th>Num of En Tweets</th>
+            </tr>
+            <tr>
+              <td>{{ currenttwt.twtnum }}</td>
+              <td>{{ currenttwt.lang.en }}</td>
+            </tr>
+          </table>
+        </div>
       </b-card>
     </div>
-    
-    <piechart class="piechart" v-if="charttype=='Pie'" :datapath = "piedata" :sa3code = "sa3_code"/>
-    <linechart class="linechart" v-if="charttype=='Line'" :datapath = "linedata" :sa3code = "sa3_code"/>
-    <barchart class="barchart" v-if="charttype=='Bar'" :datapath = "bardata" :sa3code = "sa3_code"/>
-    <radarchart class="radarchart" v-if="charttype=='Radar'" :datapath = "radardata" :sa3code = "sa3_code"/>
-    <mixedchart class="mixedchart" v-if="charttype=='Mixed1'" 
-      :datapath = "radardata" 
-      :sa3code = "sa3_code"
-      :tweetpath = "twtpath"
-      :mixedtype = "charttype"
+
+    <piechart
+      class="piechart"
+      v-if="charttype == 'Pie'"
+      :datapath="piedata"
+      :sa3code="sa3_code"
     />
-    <mixedchart class="mixedchart" v-if="charttype=='Mixed2'" 
-      :datapath = "radardata" 
-      :sa3code = "sa3_code"
-      :tweetpath = "twtpath"
-      :mixedtype = "charttype"
+    <linechart
+      class="linechart"
+      v-if="charttype == 'Line'"
+      :datapath="linedata"
+      :sa3code="sa3_code"
     />
-</div>
-  
+    <barchart
+      class="barchart"
+      v-if="charttype == 'Bar'"
+      :datapath="bardata"
+      :sa3code="sa3_code"
+    />
+    <radarchart
+      class="radarchart"
+      v-if="charttype == 'Radar'"
+      :datapath="radardata"
+      :sa3code="sa3_code"
+    />
+    <mixedchart
+      class="mixedchart"
+      v-if="charttype == 'Mixed1'"
+      :datapath="radardata"
+      :sa3code="sa3_code"
+      :tweetpath="twtpath"
+      :mixedtype="charttype"
+    />
+    <mixedchart
+      class="mixedchart"
+      v-if="charttype == 'Mixed2'"
+      :datapath="radardata"
+      :sa3code="sa3_code"
+      :tweetpath="twtpath"
+      :mixedtype="charttype"
+    />
+  </div>
 </template>
 
 <script>
 import MainFooter from "@/layout/MainFooter";
 import GoogleMapsApiLoader from "google-maps-api-loader";
 import tweetCount from "../../public/GeoJson-Data-master/count.json";
-import datafile from '@/data/AURIN_data.json';
-import piechart from '@/charttype/Piechart.vue';
-import linechart from '@/charttype/Linechart.vue';
-import barchart from '@/charttype/Barchart.vue';
-import radarchart from '@/charttype/Radarchart.vue';
-import mixedchart from '@/charttype/Mixedchart.vue';
+import datafile from "@/data/AURIN_data.json";
+import piechart from "@/charttype/Piechart.vue";
+import linechart from "@/charttype/Linechart.vue";
+import barchart from "@/charttype/Barchart.vue";
+import radarchart from "@/charttype/Radarchart.vue";
+import mixedchart from "@/charttype/Mixedchart.vue";
 
 export default {
   name: "maps-page",
@@ -191,13 +262,14 @@ export default {
     return {
       map: null,
       mapLayer: null,
+      tourismLayer:null,
       markers: [],
       displayOption: "income",
       displayCard: false,
       sa3_code: null,
       sa3_name: null,
       sa3_mean_income: null,
-      sa3_total_population:null,
+      sa3_total_population: null,
       incomeMin: Number.MAX_VALUE,
       incomeMax: -Number.MAX_VALUE,
       populationMin: Number.MAX_VALUE,
@@ -206,27 +278,27 @@ export default {
       tweetMax: -Number.MAX_VALUE,
 
       iscontained: false,
-      tweetcount:0,
+      tweetcount: 0,
       charttype: "null",
-      popupcharttype:"null",
+      popupcharttype: "null",
       piedata: datafile,
       linedata: datafile,
       bardata: datafile,
       radardata: datafile,
-      mixeddata:datafile,
+      mixeddata: datafile,
       mixedtype: "null",
       twtpath: tweetCount,
 
-      currentmode:"Static",
-      currenttwt:{},
+      currentmode: "Static",
+      currenttwt: {},
     };
   },
-  components:{
+  components: {
     piechart,
     linechart,
     barchart,
     radarchart,
-    mixedchart
+    mixedchart,
   },
   methods: {
     initMap: function() {
@@ -244,7 +316,7 @@ export default {
           strictBounds: false,
         },
         zoom: 4,
-        gestureHandling: 'greedy',
+        gestureHandling: "greedy",
         disableDefaultUI: true,
         disableDoubleClickZoom: true,
         styles: [
@@ -411,6 +483,7 @@ export default {
 
       let incomeLayer = this.loadIncome();
       let populationLayer = this.loadPopulation();
+      this.tourismLayer = this.loadTourism();
       this.mapLayer = this.loadMapLayer(incomeLayer, populationLayer);
 
       // adding layers into map
@@ -468,6 +541,7 @@ export default {
             "hsl(" + colorA[0] + "," + colorA[1] + "%," + colorA[2] + "%)";
           fill_opacity = 0.5;
         }
+
         // highlight when moveover
         if (feature.getProperty("isColorful") == true) {
           color = "yellow";
@@ -492,75 +566,73 @@ export default {
         this.sa3_name = e.feature.getProperty("SA3_NAME16");
         this.sa3_total_population = e.feature.getProperty("population");
         this.sa3_mean_income = e.feature.getProperty("income");
-        this.tweetcount = tweetCount[this.sa3_code]
+        this.tweetcount = tweetCount[this.sa3_code];
         e.feature.setProperty("isColorful", true);
 
-        if(this.currentmode == "Static"){
+        if (this.currentmode == "Static") {
           var currentsacode = document.getElementById("searchinput");
           var strs = currentsacode.value.toString().split(",");
           var changecode;
-          if((strs.length == 1)&&(strs[0] =='')){
-            if (datafile.hasOwnProperty(this.sa3_code)){
+          if (strs.length == 1 && strs[0] == "") {
+            if (datafile.hasOwnProperty(this.sa3_code)) {
               changecode = this.sa3_code;
               currentsacode.value = changecode;
             }
-          }else{
-          
-          changecode = strs[0].trim();
-          for(var i = 1; i<strs.length; i++){
-            changecode +=  ',' + strs[i].trim();
-          }
-            if (datafile.hasOwnProperty(this.sa3_code)){
-              changecode += ',' + this.sa3_code;
+          } else {
+            changecode = strs[0].trim();
+            for (var i = 1; i < strs.length; i++) {
+              changecode += "," + strs[i].trim();
+            }
+            if (datafile.hasOwnProperty(this.sa3_code)) {
+              changecode += "," + this.sa3_code;
               currentsacode.value = changecode;
-              }
+            }
           }
         }
 
-        if(this.currentmode == "Dynamic"){
-          var currentsacode = this.sa3_code
+        if (this.currentmode == "Dynamic") {
+          var currentsacode = this.sa3_code;
           var nextmode = document.getElementById("changemode");
-          if(nextmode.innerHTML == "Static"){
-            var start_time = document.getElementById("starttime").value.toString(); 
-            if (start_time == ""){
+          if (nextmode.innerHTML == "Static") {
+            var start_time = document
+              .getElementById("starttime")
+              .value.toString();
+            if (start_time == "") {
               document.getElementById("starttime").value = "2014-01-23";
               start_time = "2014-01-23";
             }
-            var end_time = document.getElementById("endtime").value.toString(); 
-            if (end_time == ""){
+            var end_time = document.getElementById("endtime").value.toString();
+            if (end_time == "") {
               document.getElementById("endtime").value = "2018-09-10";
               end_time = "2018-09-10";
             }
             // 115.146.95.16   172.26.132.92   45.88.195.224
-            var host = '115.146.95.16'
+            var host = "115.146.95.16";
             var url1 = `http://${host}:5000/geo/${currentsacode}/${start_time}/${end_time}/`;
             var url2 = `http://${host}:5000/lang/${currentsacode}/${start_time}/${end_time}/`;
 
-            const axios = require('axios');
-            axios.all([
-              axios.get(url1),
-              axios.get(url2),
-            ]).then(axios.spread((r1, r2) => {
-              this.currenttwt = {};
-              this.currenttwt.twtnum = r1.data[currentsacode]
-              this.currenttwt.lang = r2.data[currentsacode]
+            const axios = require("axios");
+            axios
+              .all([axios.get(url1), axios.get(url2)])
+              .then(
+                axios.spread((r1, r2) => {
+                  this.currenttwt = {};
+                  this.currenttwt.twtnum = r1.data[currentsacode];
+                  this.currenttwt.lang = r2.data[currentsacode];
 
-              this.popupcharttype = "null";
-              this.$nextTick(() => {
-                  this.popupcharttype = "godyn";  
+                  this.popupcharttype = "null";
+                  this.$nextTick(() => {
+                    this.popupcharttype = "godyn";
+                  });
                 })
-            })).catch(error => {
+              )
+              .catch((error) => {
                 // console.log(error);
-            });
+              });
           }
         }
       });
-      maplayer.addListener("rightclick", (e) => {
-        var maker = new google.maps.Marker({
-          position: e.latLng,
-          map: this.map,
-        });
-      });
+      maplayer.addListener("rightclick", (e) => {});
       maplayer.addListener("dblclick", function(e) {
         let bounds = new google.maps.LatLngBounds();
         e.feature.getGeometry().forEachLatLng((x) => bounds.extend(x));
@@ -573,31 +645,29 @@ export default {
         this.sa3_name = e.feature.getProperty("SA3_NAME16");
         this.sa3_total_population = e.feature.getProperty("population");
         this.sa3_mean_income = e.feature.getProperty("income");
-        this.tweetcount = tweetCount[this.sa3_code]
+        this.tweetcount = tweetCount[this.sa3_code];
         e.feature.setProperty("isColorful", true);
 
-        if(this.currentmode == "Static"){
-        
-        if(datafile.hasOwnProperty(this.sa3_code)){
-          this.iscontained = false;
-          this.popupcharttype = "null";
+        if (this.currentmode == "Static") {
+          if (datafile.hasOwnProperty(this.sa3_code)) {
+            this.iscontained = false;
+            this.popupcharttype = "null";
 
-          this.$nextTick(() => {
-                this.iscontained = true;
-                this.popupcharttype = "Pie";  
-            })
-        }else{
-          this.iscontained = false;
-          this.popupcharttype = "null";
-
-        }
+            this.$nextTick(() => {
+              this.iscontained = true;
+              this.popupcharttype = "Pie";
+            });
+          } else {
+            this.iscontained = false;
+            this.popupcharttype = "null";
+          }
         }
       });
       maplayer.addListener("mouseout", (e) => {
         this.displayCard = false;
         e.feature.setProperty("isColorful", false);
         this.iscontained = false;
-          this.popupcharttype = "null";
+        this.popupcharttype = "null";
       });
       maplayer.addListener("addfeature", (e) => {
         if (incomeLayer.getFeatureById(e.feature.getId())) {
@@ -625,6 +695,7 @@ export default {
             this.populationMin = population;
           }
         }
+
       });
       return maplayer;
     },
@@ -707,6 +778,29 @@ export default {
 
       return populationLayer;
     },
+    loadTourism: function() {
+      let tourismLayer = new google.maps.Data();
+      tourismLayer.loadGeoJson("./GeoJson-Data-master/tourism.json", {
+        idPropertyName: "tr_code14",
+      });
+      tourismLayer.setStyle((feature) => {
+        let color = "white";
+        let stroke_weight = 0.1;
+        let stroke_opacity = 1;
+        let fill_opacity = 0.3;
+
+        if (feature.getProperty("rank") < 10) {
+          color = "blue";
+        }
+        return {
+          fillColor: color,
+          fillOpacity: fill_opacity,
+          strokeOpacity: stroke_opacity,
+          strokeWeight: stroke_weight,
+        };
+      });
+      return tourismLayer;
+    },
     zoomToMelb: function() {
       var myOptions = {
         zoom: 9,
@@ -734,6 +828,9 @@ export default {
       };
       this.map.setOptions(myOptions);
     },
+    displayTourism: function() {
+      this.tourismLayer.setMap(this.map);
+    },
     displayPopulation: function() {
       this.mapLayer.forEach(function(feature) {
         feature.setProperty("displayOption", "population");
@@ -745,78 +842,83 @@ export default {
       };
       this.map.setOptions(myOptions);
     },
-    goPie(){
+    hideDisplay: function() {
+      this.mapLayer.forEach(function(feature) {
+        feature.setProperty("displayOption", "null");
+      });
+      this.tourismLayer.setMap(null);
+    },
+    goPie() {
       var searchbox = document.getElementById("searchinput");
       this.sa3_code = searchbox.value.toString();
       this.charttype = "null";
       this.$nextTick(() => {
-                this.charttype = "Pie";  
-            })
+        this.charttype = "Pie";
+      });
     },
-    goLine(){
+    goLine() {
       var searchbox = document.getElementById("searchinput");
       this.sa3_code = searchbox.value.toString();
       this.charttype = "null";
       this.$nextTick(() => {
-                this.charttype = "Line";  
-            })
+        this.charttype = "Line";
+      });
     },
-    goBar(){
+    goBar() {
       var searchbox = document.getElementById("searchinput");
       this.sa3_code = searchbox.value.toString();
       this.charttype = "null";
       this.$nextTick(() => {
-                this.charttype = "Bar";  
-            })
+        this.charttype = "Bar";
+      });
     },
-    goRadar(){
+    goRadar() {
       var searchbox = document.getElementById("searchinput");
       this.sa3_code = searchbox.value.toString();
       this.charttype = "null";
       this.$nextTick(() => {
-                this.charttype = "Radar";  
-            })
+        this.charttype = "Radar";
+      });
     },
-    goMixed1(){
+    goMixed1() {
       var searchbox = document.getElementById("searchinput");
       this.sa3_code = searchbox.value.toString();
       this.charttype = "null";
       this.$nextTick(() => {
-                this.charttype = "Mixed1";  
-            })
+        this.charttype = "Mixed1";
+      });
     },
-    goMixed2(){
+    goMixed2() {
       var searchbox = document.getElementById("searchinput");
       this.sa3_code = searchbox.value.toString();
       this.charttype = "null";
       this.$nextTick(() => {
-                this.charttype = "Mixed2";  
-            })
+        this.charttype = "Mixed2";
+      });
     },
-    changeMode(){
+    changeMode() {
       var nextmode = document.getElementById("changemode");
-      if(nextmode.innerHTML == "Dynamic"){
+      if (nextmode.innerHTML == "Dynamic") {
         nextmode.innerHTML = "Static";
         this.currentmode = "Dynamic";
-      }else{
+      } else {
         nextmode.innerHTML = "Dynamic";
         this.currentmode = "Static";
       }
-
     },
-    changeDate(){
-      var start_time = document.getElementById("starttime").value.toString(); 
-      if (start_time == ""){
-          document.getElementById("starttime").value = "2014-01-23";
-          start_time = "2014-01-23";
-        }
-        var end_time = document.getElementById("endtime").value.toString(); 
-      if (end_time == ""){
-          document.getElementById("endtime").value = "2018-09-10";
-          end_time = "2018-09-10";
-        }
+    changeDate() {
+      var start_time = document.getElementById("starttime").value.toString();
+      if (start_time == "") {
+        document.getElementById("starttime").value = "2014-01-23";
+        start_time = "2014-01-23";
+      }
+      var end_time = document.getElementById("endtime").value.toString();
+      if (end_time == "") {
+        document.getElementById("endtime").value = "2018-09-10";
+        end_time = "2018-09-10";
+      }
     },
-    godown(){
+    godown() {
       var type = this.charttype;
       // if(type == "null"){
       //   alert("Please choose chart type first!");
@@ -826,34 +928,33 @@ export default {
       this.charttype = "null";
 
       this.$nextTick(() => {
-                var searchbox = document.getElementById("searchinput");
-                this.sa3_code = searchbox.value.toString();
-                switch(type){
-                  case "Pie":
-                  case "null":
-                    this.charttype = "Pie";
-                    break;
-                  case "Line":
-                    this.charttype = "Line";
-                    break;
-                  case "Bar":
-                    this.charttype = "Bar";
-                    break;
-                  case "Radar":
-                    this.charttype = "Radar";
-                    break;
-                  case "Mixed1":
-                    this.charttype = "Mixed1";
-                    break;
-                  case "Mixed2":
-                    this.charttype = "Mixed2";
-                    break;
-                }
-            })
+        var searchbox = document.getElementById("searchinput");
+        this.sa3_code = searchbox.value.toString();
+        switch (type) {
+          case "Pie":
+          case "null":
+            this.charttype = "Pie";
+            break;
+          case "Line":
+            this.charttype = "Line";
+            break;
+          case "Bar":
+            this.charttype = "Bar";
+            break;
+          case "Radar":
+            this.charttype = "Radar";
+            break;
+          case "Mixed1":
+            this.charttype = "Mixed1";
+            break;
+          case "Mixed2":
+            this.charttype = "Mixed2";
+            break;
+        }
+      });
       var scrollingElement = document.scrollingElement;
       scrollingElement.scrollTop = scrollingElement.scrollHeight;
-
-    }
+    },
   },
   mounted() {
     this.charttype = "Pie";
@@ -891,14 +992,12 @@ export default {
   background-color: black;
 }
 
-#sidebarpic{
+#sidebarpic {
   position: relative;
   width: 250px;
   height: 180px;
 
-  margin-top:10px;
-
-
+  margin-top: 10px;
 }
 #SA3-info {
   position: absolute;
@@ -965,61 +1064,60 @@ form.example::after {
   bottom: 250px;
   right: 800px;
   z-index: 99;
-
 }
 
 #progress-bar-container {
-	width: 400px;
-	height: 20px;
-	margin: 0 auto;
-	position: relative;
-	transform: translateY(-50%);
-	border-radius: 35px;
+  width: 400px;
+  height: 20px;
+  margin: 0 auto;
+  position: relative;
+  transform: translateY(-50%);
+  border-radius: 35px;
   overflow: hidden;
   bottom: 100px;
-  right: -685px; 
+  right: -685px;
 }
 
 .progress-bar-child {
-	width: 100%;
-	height: 100%;
+  width: 100%;
+  height: 100%;
 }
 
 .progress {
-	color: white;
-	text-align: center;
-	line-height: 75px;
-	font-size: 35px;
-	font-family: "Segoe UI";
-	animation-direction: reverse;
-	background: #e5405e;
+  color: white;
+  text-align: center;
+  line-height: 75px;
+  font-size: 35px;
+  font-family: "Segoe UI";
+  animation-direction: reverse;
+  background: #e5405e;
 
-	/* Chrome10-25,Safari5.1-6 */
-	background: linear-gradient(to right, #3fffa2 0%, #ffdb3a 45%, #e5405e 100%);
+  /* Chrome10-25,Safari5.1-6 */
+  background: linear-gradient(to right, #3fffa2 0%, #ffdb3a 45%, #e5405e 100%);
 }
 
 .shrinker {
-	background-color: gray;
-	position: absolute;
-	top: 0;
-	right: 0;
-	width: 100%;
+  background-color: gray;
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 100%;
 }
 
 .timelapse {
-	animation-name: timelapse;
-	animation-fill-mode: forwards;
-	animation-duration: 2s;
-	animation-timing-function: cubic-bezier(.86, .05, .4, .96);
+  animation-name: timelapse;
+  animation-fill-mode: forwards;
+  animation-duration: 2s;
+  animation-timing-function: cubic-bezier(0.86, 0.05, 0.4, 0.96);
 }
 
 @keyframes timelapse {
-	0% {
-		width: 100%;
-	}
-	100% {
-		width: 0%;
-	}
+  0% {
+    width: 100%;
+  }
+  100% {
+    width: 0%;
+  }
 }
 
 #text1 {
@@ -1057,5 +1155,4 @@ form.example::after {
   bottom: 70px;
   left: 1000px;
 }
-
 </style>
