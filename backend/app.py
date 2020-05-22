@@ -1,4 +1,5 @@
 from flask import Flask, jsonify, abort, request, make_response, redirect, url_for
+from flask_cors import CORS
 from flasgger import Swagger
 from auth import auth
 from error_handler import handler as error_handler
@@ -13,7 +14,7 @@ app.register_blueprint(db_blueprint, url_prefix='/db')
 app.register_blueprint(geo_blueprint, url_prefix='/geo')
 app.register_blueprint(lang_blueprint, url_prefix='/lang')
 
-
+CORS(app)
 Swagger(app, config=swagger_config, template=template)
 
 
@@ -27,4 +28,4 @@ def server_shutdown():
 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', debug=False)
+    app.run(host='0.0.0.0', debug=True)
