@@ -8,8 +8,12 @@ export default {
     }
   },
   mounted () {
+    try{
     var strs = new Array(); 
-    strs = this.sa3code.split(","); 
+    strs = this.sa3code.split(",");
+    for(var i = 0; i<strs.length; i++){
+      strs[i] =  strs[i].trim();
+    } 
     
     var input_dataset = [];
     var instance = {};
@@ -26,6 +30,7 @@ export default {
     var lang_freq = [];
     var old_freq = [];
     for(var key in lang){
+        if(key == 'en')continue;
         lang_list.push(key)
         lang_freq.push(lang[key])
         old_freq.push(lang[key])
@@ -141,7 +146,11 @@ export default {
     // Overwriting base render method with actual data.
     this.renderChart(bardata, options)
   }
+ 
     
+  }catch(err){
+
   }
+}
 }
 </script>

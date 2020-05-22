@@ -8,8 +8,12 @@ export default {
     }
   },
   mounted() {
+    try{
     var strs = new Array(); 
     strs = this.sa3code.split(","); 
+    for(var i = 0; i<strs.length; i++){
+      strs[i] =  strs[i].trim();
+    } 
     
     var input_dataset = [];
     var instance = {};
@@ -50,6 +54,10 @@ export default {
     }
     // Overwriting base render method with actual data.
     this.renderChart(radardata, options)
+
+    }catch(err){
+
+    }
   }
 }
 

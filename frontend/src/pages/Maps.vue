@@ -11,19 +11,20 @@
       >
 
       
-      
+      <div class = "tempbar">
       <div id="progress-bar-container">
           <div class="progress-bar-child progress"></div>
           <div class="progress-bar-child shrinker timelapse"></div>
       </div>
 
-      <h7 id="text1">25,000</h7>
-      <h7 id="text2">Population</h7>
-      <h7 id="text3">300,000</h7>
+      <p id="text1">25,000</p>
+      <p id="text2">Population</p>
+      <p id="text3">300,000</p>
 
-      <h7 id="text4">$50,000</h7>
-      <h7 id="text5">Income</h7>
-      <h7 id="text6">$150,000</h7>
+      <p id="text4">$50,000</p>
+      <p id="text5">Income</p>
+      <p id="text6">$150,000</p>
+      </div>
 
       <b-sidebar 
         id="sidebar-variant"
@@ -37,9 +38,9 @@
             <div class="glass">
               <div>
                 <b-dropdown id="dropdown-1" text="Aurin Data">
-                  <b-dropdown-item>Age</b-dropdown-item>
+                  <!-- <b-dropdown-item>Age</b-dropdown-item>
                   <b-dropdown-item>Salary</b-dropdown-item>
-                  <b-dropdown-item>Other languages</b-dropdown-item>
+                  <b-dropdown-item>Other languages</b-dropdown-item> -->
                   <b-dropdown-item @click="displayIncome"
                     >Income</b-dropdown-item
                   >
@@ -48,6 +49,9 @@
                   >
                   <b-dropdown-item @click="zoomToMelb"
                     >Melbourne</b-dropdown-item
+                  >
+                  <b-dropdown-item @click="zoomToSydn"
+                    >Sydney</b-dropdown-item
                   >
                   <b-dropdown-item @click="loadTwitterCount"
                     >Tweets</b-dropdown-item
@@ -60,9 +64,10 @@
 
               <div>
                 <button type="submit" id = "changemode" class="switchButton" v-on:click="changeMode">Dynamic</button>
+                <p  class = "modetext">Current Mode: {{currentmode}}</p>
               </div>
 
-              <div class = "timesearch">
+              <div class = "timesearch" v-if= "currentmode=='Dynamic'">
                 <input type="text" id="starttime" class="search_time" placeholder="2014-01-23">
                 <p> ~ </p>
                 <input type="text" id="endtime" class="search_time" placeholder="2018-09-10">
@@ -72,7 +77,7 @@
               </div>
 
               <div class="search">
-                  <input type="text" id="searchinput" class="searchTerm" placeholder="Please input SA3 code.">
+                  <input type="text" id="searchinput" class="searchTerm" placeholder="Please input SA3 code." v-on:keyup.enter="godown">
                   <button type="submit" class="searchButton" v-on:click="godown">
                     GO
                   </button>
@@ -92,10 +97,10 @@
                           <a id='premium'>Radar</a>
                 </button>
                 <button class="mixedBtn1" v-on:click="goMixed2">
-                          <a id='premium'>Twitter & Income </a>
+                          <a id='premium'>Tweets & Income </a>
                 </button>
                 <button class="mixedBtn2" v-on:click="goMixed1">
-                          <a id='premium'>Twitter & Age</a>
+                          <a id='premium'>Tweets & Age</a>
                 </button>
                 <b-img id = "sidebarpic" src="https://picsum.photos/500/500/?image=54" fluid thumbnail></b-img>
               </div>
@@ -115,14 +120,14 @@
       >
         <b-card-text>SA Code: {{ sa3_code }}</b-card-text>
         <b-card-text>Area: {{ sa3_name }}</b-card-text>
-        <b-card-text>Total Population: {{ sa3_total_population }}</b-card-text>
+        <b-card-text v-if="sa3_total_population != null">Total Population: {{ sa3_total_population }}</b-card-text>
 
         <div v-if= "currentmode=='Static'">
-        <piechart v-if="charttype=='Pie'" :datapath = "piedata" :sa3code = "sa3_code"/>
+        <piechart v-if="popupcharttype=='Pie'" :datapath = "piedata" :sa3code = "sa3_code"/>
         <table v-if="iscontained" id="PopupTable">
           <tr>
             <th>Income(AUD$)</th>
-            <th>Num of Twitters</th>
+            <th>Num of Tweets</th>
           </tr>
           <tr>
             <td>{{sa3_mean_income}}</td>
@@ -132,19 +137,22 @@
       </div>
 
       <div v-if= "currentmode=='Dynamic'">
-        <barchart v-if="charttype=='godyn'" :datapath = "currenttwt" :sa3code = "sa3_code"/>
-        <table id="PopupTable" v-if="charttype=='godyn'">
+        <barchart v-if="popupcharttype=='godyn'" :datapath = "currenttwt" :sa3code = "sa3_code"/>
+        <table id="PopupTable" v-if="popupcharttype=='godyn'">
           <tr>
-            <th>Num of Twitters</th>
+            <th>Num of Tweets</th>
+            <th>Num of En Tweets</th>
           </tr>
           <tr>
             <td>{{currenttwt.twtnum}}</td>
+            <td>{{currenttwt.lang.en}}</td>
           </tr>
         </table>
       </div>
 
       </b-card>
     </div>
+    
     <piechart class="piechart" v-if="charttype=='Pie'" :datapath = "piedata" :sa3code = "sa3_code"/>
     <linechart class="linechart" v-if="charttype=='Line'" :datapath = "linedata" :sa3code = "sa3_code"/>
     <barchart class="barchart" v-if="charttype=='Bar'" :datapath = "bardata" :sa3code = "sa3_code"/>
@@ -200,6 +208,7 @@ export default {
       iscontained: false,
       tweetcount:0,
       charttype: "null",
+      popupcharttype:"null",
       piedata: datafile,
       linedata: datafile,
       bardata: datafile,
@@ -235,6 +244,7 @@ export default {
           strictBounds: false,
         },
         zoom: 4,
+        gestureHandling: 'greedy',
         disableDefaultUI: true,
         disableDoubleClickZoom: true,
         styles: [
@@ -485,14 +495,62 @@ export default {
         this.tweetcount = tweetCount[this.sa3_code]
         e.feature.setProperty("isColorful", true);
 
-        if(this.currentmode == "Dynamic"){
-          var currenttwt = this.$options.methods.getHttp(this.sa3_code)
-          this.currenttwt = currenttwt;
+        if(this.currentmode == "Static"){
+          var currentsacode = document.getElementById("searchinput");
+          var strs = currentsacode.value.toString().split(",");
+          var changecode;
+          if((strs.length == 1)&&(strs[0] =='')){
+            if (datafile.hasOwnProperty(this.sa3_code)){
+              changecode = this.sa3_code;
+              currentsacode.value = changecode;
+            }
+          }else{
+          
+          changecode = strs[0].trim();
+          for(var i = 1; i<strs.length; i++){
+            changecode +=  ',' + strs[i].trim();
+          }
+            if (datafile.hasOwnProperty(this.sa3_code)){
+              changecode += ',' + this.sa3_code;
+              currentsacode.value = changecode;
+              }
+          }
+        }
 
-          this.charttype = "null";
-          this.$nextTick(() => {
-                this.charttype = "godyn";  
-            })
+        if(this.currentmode == "Dynamic"){
+          var currentsacode = this.sa3_code
+          var nextmode = document.getElementById("changemode");
+          if(nextmode.innerHTML == "Static"){
+            var start_time = document.getElementById("starttime").value.toString(); 
+            if (start_time == ""){
+              document.getElementById("starttime").value = "2014-01-23";
+              start_time = "2014-01-23";
+            }
+            var end_time = document.getElementById("endtime").value.toString(); 
+            if (end_time == ""){
+              document.getElementById("endtime").value = "2018-09-10";
+              end_time = "2018-09-10";
+            }
+            var url1 = `http://172.26.132.92:5000/geo/${currentsacode}/${start_time}/${end_time}/`;
+            var url2 = `http://172.26.132.92:5000/lang/${currentsacode}/${start_time}/${end_time}/`;
+
+            const axios = require('axios');
+            axios.all([
+              axios.get(url1),
+              axios.get(url2),
+            ]).then(axios.spread((r1, r2) => {
+              this.currenttwt = {};
+              this.currenttwt.twtnum = r1.data[currentsacode]
+              this.currenttwt.lang = r2.data[currentsacode]
+
+              this.popupcharttype = "null";
+              this.$nextTick(() => {
+                  this.popupcharttype = "godyn";  
+                })
+            })).catch(error => {
+                // console.log(error);
+            });
+          }
         }
       });
       maplayer.addListener("rightclick", (e) => {
@@ -520,15 +578,15 @@ export default {
         
         if(datafile.hasOwnProperty(this.sa3_code)){
           this.iscontained = false;
-          this.charttype = "null";
+          this.popupcharttype = "null";
 
           this.$nextTick(() => {
                 this.iscontained = true;
-                this.charttype = "Pie";  
+                this.popupcharttype = "Pie";  
             })
         }else{
           this.iscontained = false;
-          this.charttype = "null";
+          this.popupcharttype = "null";
 
         }
         }
@@ -537,7 +595,7 @@ export default {
         this.displayCard = false;
         e.feature.setProperty("isColorful", false);
         this.iscontained = false;
-          this.charttype = "null";
+          this.popupcharttype = "null";
       });
       maplayer.addListener("addfeature", (e) => {
         if (incomeLayer.getFeatureById(e.feature.getId())) {
@@ -655,15 +713,35 @@ export default {
       };
       this.map.setOptions(myOptions);
     },
+    zoomToSydn: function() {
+      var myOptions = {
+        zoom: 9,
+        center: new google.maps.LatLng(-33.856156, 151.004201),
+        panControl: false,
+      };
+      this.map.setOptions(myOptions);
+    },
     displayIncome: function() {
       this.mapLayer.forEach(function(feature) {
         feature.setProperty("displayOption", "income");
       });
+      var myOptions = {
+        zoom: 7,
+        center: new google.maps.LatLng(-36.380542, 148.051793),
+        panControl: false,
+      };
+      this.map.setOptions(myOptions);
     },
     displayPopulation: function() {
       this.mapLayer.forEach(function(feature) {
         feature.setProperty("displayOption", "population");
       });
+      var myOptions = {
+        zoom: 7,
+        center: new google.maps.LatLng(-36.380542, 148.051793),
+        panControl: false,
+      };
+      this.map.setOptions(myOptions);
     },
     goPie(){
       var searchbox = document.getElementById("searchinput");
@@ -736,53 +814,13 @@ export default {
           end_time = "2018-09-10";
         }
     },
-
-    getHttp(currentsacode){
-      var nextmode = document.getElementById("changemode");
-      if(nextmode.innerHTML == "Static"){
-        var xhr = new XMLHttpRequest();
-        xhr.onreadystatechange = function () {
-            if (xhr.readyState == 4 && xhr.status == 200) {
-                var res= xhr.responseText;
-                return res;
-        
-            }
-        };
-        // Get Tweet Number.
-        // Send requests to proxy serve to fail cors.
-   
-        var start_time = document.getElementById("starttime").value.toString(); 
-        if (start_time == ""){
-          document.getElementById("starttime").value = "2014-01-23";
-          start_time = "2014-01-23";
-        }
-        var end_time = document.getElementById("endtime").value.toString(); 
-        if (end_time == ""){
-          document.getElementById("endtime").value = "2018-09-10";
-          end_time = "2018-09-10";
-        }
-        var url1 = 'http://172.26.132.92:5000/geo/' + currentsacode + '/' + start_time + '/' + end_time +'/?detail=false';
-        var url2 = 'http://172.26.132.92:5000/lang/' + currentsacode + '/' + start_time + '/' + end_time +'/?detail=false';
-
-
-        xhr.open('GET', url1, false);
-        xhr.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
-        xhr.send();
-        var tweetnum = JSON.parse(xhr.onreadystatechange())[currentsacode];
-
-        xhr.open('GET', url2, false);
-        xhr.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
-        xhr.send();
-        var lang = JSON.parse(xhr.onreadystatechange())[currentsacode];
-
-        var currenttwt ={};
-        currenttwt.twtnum =  tweetnum;       
-        currenttwt.lang =  lang; 
-        return currenttwt;   
-      }
-    },
     godown(){
       var type = this.charttype;
+      // if(type == "null"){
+      //   alert("Please choose chart type first!");
+      //   return;
+      // }
+
       this.charttype = "null";
 
       this.$nextTick(() => {
@@ -812,9 +850,11 @@ export default {
             })
       var scrollingElement = document.scrollingElement;
       scrollingElement.scrollTop = scrollingElement.scrollHeight;
+
     }
   },
   mounted() {
+    this.charttype = "Pie";
     const googleMapApi = GoogleMapsApiLoader({
       apiKey: "AIzaSyDXG60896YH8pjO-svO4f7zQlxWBlZHp98",
     }).then((google) => {
@@ -843,9 +883,9 @@ export default {
 }
 
 #side-button {
-  position: absolute;
+  position: fixed;
   top: 150px;
-  left: 100px;
+  left: 300px;
   background-color: black;
 }
 
@@ -881,6 +921,7 @@ export default {
   filter: blur(0px);
   z-index: 999;
 }
+
 form.example {
   margin-left: 0px;
 }
@@ -917,16 +958,24 @@ form.example::after {
   display: table;
 }
 
+.tempbar {
+  position: absolute;
+  bottom: 250px;
+  right: 800px;
+  z-index: 99;
+
+}
+
 #progress-bar-container {
-	width: 300px;
+	width: 400px;
 	height: 20px;
 	margin: 0 auto;
-	position: absolute;
+	position: relative;
 	transform: translateY(-50%);
 	border-radius: 35px;
   overflow: hidden;
-  bottom: 80px;
-  right: 750px;
+  bottom: 100px;
+  right: -685px; 
 }
 
 .progress-bar-child {

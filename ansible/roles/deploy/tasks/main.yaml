@@ -9,6 +9,7 @@
   docker_compose:
     project_src: "{{ working_dir }}"
     pull: yes
+    build: yes
     # state: absent
     remove_orphans: yes
     remove_volumes: yes

@@ -73,6 +73,19 @@
   font-size: 30px;
   line-height: 25px;
   font-family:unicorn;
+  float:left;
+}
+.modetext {
+  outline: none;
+  width: 180px;
+  height: 36px;
+  outline: none;
+  text-align: center;
+  color: #fff;
+  cursor: pointer;
+  font-size: 15px;
+  line-height: 36px;
+  float:left;
 }
 
 
