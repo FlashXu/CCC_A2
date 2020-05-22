@@ -531,8 +531,10 @@ export default {
               document.getElementById("endtime").value = "2018-09-10";
               end_time = "2018-09-10";
             }
-            var url1 = `http://172.26.132.92:5000/geo/${currentsacode}/${start_time}/${end_time}/`;
-            var url2 = `http://172.26.132.92:5000/lang/${currentsacode}/${start_time}/${end_time}/`;
+            // 115.146.95.16   172.26.132.92   45.88.195.224
+            var host = '115.146.95.16'
+            var url1 = `http://${host}:5000/geo/${currentsacode}/${start_time}/${end_time}/`;
+            var url2 = `http://${host}:5000/lang/${currentsacode}/${start_time}/${end_time}/`;
 
             const axios = require('axios');
             axios.all([
