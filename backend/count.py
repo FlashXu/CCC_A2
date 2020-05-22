@@ -72,7 +72,7 @@ def summary_with_time(view, sa, start, end, callback):
     response = requests.post(url, json=queries).content
     results = json.loads(response)['results']
     rows = [r['rows'][0] for r in results if r['rows']]
-    result = {''.join(r['key']): r['value'] for r in rows}
+    result = {''.join(r['key']): r['value'] for r in rows if ''.join(r['key']) != 'und'}
 
     detail = request.args.get('detail')
     if detail and detail.lower() in ("yes", "true", "t", "1"):
