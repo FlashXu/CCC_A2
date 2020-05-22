@@ -24,7 +24,10 @@
         <p id="text5">Income</p>
         <p id="text6">$150,000</p>
       </div>
-
+      <div id="displayBar">
+        <b-progress v-if="displayOption=='population'" :value="sa3_total_population" :max="populationMax" show-progress animated></b-progress>
+        <b-progress v-if="displayOption=='income'" :value="sa3_mean_income" :max="incomeMax" show-progress animated></b-progress>
+      </div>
       <b-sidebar
         id="sidebar-variant"
         title="Display options"
@@ -264,7 +267,7 @@ export default {
       mapLayer: null,
       tourismLayer:null,
       markers: [],
-      displayOption: "income",
+      displayOption: "null",
       displayCard: false,
       sa3_code: null,
       sa3_name: null,
@@ -821,6 +824,7 @@ export default {
       this.mapLayer.forEach(function(feature) {
         feature.setProperty("displayOption", "income");
       });
+      this.displayOption = "income";
       var myOptions = {
         zoom: 7,
         center: new google.maps.LatLng(-36.380542, 148.051793),
@@ -835,6 +839,7 @@ export default {
       this.mapLayer.forEach(function(feature) {
         feature.setProperty("displayOption", "population");
       });
+      this.displayOption = "population";
       var myOptions = {
         zoom: 7,
         center: new google.maps.LatLng(-36.380542, 148.051793),
@@ -846,6 +851,7 @@ export default {
       this.mapLayer.forEach(function(feature) {
         feature.setProperty("displayOption", "null");
       });
+      this,displayOption = "null";
       this.tourismLayer.setMap(null);
     },
     goPie() {
@@ -1109,6 +1115,15 @@ form.example::after {
   animation-fill-mode: forwards;
   animation-duration: 2s;
   animation-timing-function: cubic-bezier(0.86, 0.05, 0.4, 0.96);
+}
+
+#displayBar {
+  position: absolute;
+  width:300px;
+  height:60px;
+  bottom: 400px;
+  right: 200px;
+  z-index: 99;
 }
 
 @keyframes timelapse {
