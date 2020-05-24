@@ -1,0 +1,76 @@
+ tr_code14, rank, state, tourism_region,expenditure
+1R040,1,NSW,Sydney,15219
+2R010,2,Vic,Melbourne,13777
+3R020,3,Qld,Brisbane,6412
+5R120,4,WA ,Experience Perth,5981
+3R010,5,Qld,Gold Coast,4521
+3R120,7,Qld,Tropical North Queensland,3087
+4R040,8,SA ,Adelaide,3011
+3R030,9,Qld,Sunshine Coast,2463
+1R010,10,NSW,South Coast,2396
+1R100,11,NSW,Hunter,2272
+8R990,12,ACT,Canberra,1876
+5R140,13,WA ,Australia's South West,1727
+1R090,14,NSW,Central NSW,1357
+5R160,15,WA ,Australia's North West,1356
+6R100,16,Tas,Hobart and the South,1349
+2R040,17,Vic,Western,1150
+3R060,18,Qld,Darling Downs,1077
+3R080,19,Qld,Central Queensland,1030
+7R010,20,NT ,Darwin,1019
+3R110,21,Qld,Northern,955
+1R180,22,NSW,Central Coast,825
+2R070,23,Vic,Peninsula,824
+6R110,24,Tas,"Launceston, Tamar and the North",801
+1R140,25,NSW,New England North West,772
+5R170,26,WA ,Australia's Coral Coast,728
+2R100,27,Vic,High Country,727
+2R140,28,Vic,Geelong,725
+1R080,29,NSW,Riverina,666
+1R070,30,NSW,The Murray,650
+1R060,31,NSW,Capital Country,646
+3R100,32,Qld,Whitsundays,612
+5R130,33,WA ,Australia's Golden Outback,611
+3R090,34,Qld,Mackay,580
+1R190,35,NSW,Blue Mountains,558
+1R050,36,NSW,Snowy Mountains,543
+2R120,37,Vic,Gippsland,487
+3R040,38,Qld,Fraser Coast,463
+2R060,39,Vic,Bendigo Loddon,451
+2R030,40,Vic,Mallee,448
+3R070,41,Qld,Bundaberg,440
+2R130,42,Vic,Melbourne East,423
+2R080,43,Vic,Central Murray,422
+4R030,44,SA ,Fleurieu Peninsula,414
+2R170,45,Vic,Ballarat,391
+4R010,46,SA ,Limestone Coast,383
+6R060,47,Tas,North West,357
+2R090,48,Vic,Goulburn,355
+2R210,49,Vic,Phillip Island,350
+7R150,50,NT ,Lasseter,330
+2R110,51,Vic,Lakes,324
+4R070,52,SA ,Flinders Ranges and Outback,314
+3R140,53,Qld,Outback,312
+4R110,54,SA ,Eyre Peninsula,271
+7R070,55,NT ,Alice Springs,262
+1R150,56,NSW,Outback NSW,228
+7R100,57,NT ,Kakadu Arnhem,226
+2R050,58,Vic,Western Grampians,207
+2R160,59,Vic,Spa Country,202
+4R120,60,SA ,Yorke Peninsula,199
+4R050,61,SA ,Barossa,187
+2R180,62,Vic,Central Highlands,168
+4R060,63,SA ,Riverland,142
+6R030,64,Tas,East Coast,126
+4R020,65,SA ,Murraylands,114
+2R150,66,Vic,Macedon,107
+2R190,67,Vic,Upper Yarra,103
+4R140,68,SA ,Adelaide Hills,96
+7R110,69,NT ,Katherine Daly,95
+2R200,70,Vic,Murray East,92
+4R080,71,SA ,Clare Valley,89
+4R130,72,SA ,Kangaroo Island,81
+2R020,73,Vic,Wimmera,68
+6R080,74,Tas,Wilderness West,63
+7R050,75,NT ,Barkly,52
+7R140,76,NT ,MacDonnell,20

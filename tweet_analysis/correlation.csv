@@ -1,0 +1,5 @@
+,total tweets,travel tweets,population,income
+total tweets,1,,,
+travel tweets,0.985805776,1,,
+population,0.46657038,0.456077663,1,
+income,0.224615868,0.224927436,0.501522679,1
