@@ -64,21 +64,28 @@ def summary_with_time(view, sa, start, end, callback):
     start = parse_date(start)
     end = parse_date(end)
 
-    queries = {'queries': [build_query(
-        s, start, end, group_level=3) for s in zones_start_with(sa)]}
-
-    ddoc, view = view.split('/')
-    url = f'{utils.base()}/tweets/_design/{ddoc}/_view/{view}/queries'
-    response = requests.post(url, json=queries).content
-    results = json.loads(response)['results']
-    rows = [r['rows'][0] for r in results if r['rows']]
-    result = {''.join(r['key']): r['value'] for r in rows if ''.join(r['key']) != 'und'}
-
     detail = request.args.get('detail')
-    if detail and detail.lower() in ("yes", "true", "t", "1"):
-        return result
+    detail = bool(detail and detail.lower() in ("yes", "true", "t", "1"))
+    ddoc, view = view.split('/')
+    if len(sa) == 5 and not detail:
+        count = {}
+        for r in db.view(f'{ddoc}_sa3/{view}', group_level=2, startkey=[*cut(sa, cut_point=[3]), *start], endkey=[*cut(sa, cut_point=[3]), *end]):
+            if r.key:
+                key = ''.join(r.key)
+                if key != 'und':
+                    count[key] = r.value
+        return count
     else:
-        return {sa: callback(result)}
+        queries = {'queries': [build_query(
+            s, start, end, group_level=3) for s in zones_start_with(sa)]}
+
+        url = f'{utils.base()}/tweets/_design/{ddoc}/_view/{view}/queries'
+        response = requests.post(url, json=queries).content
+        results = json.loads(response)['results']
+        rows = [r['rows'][0] for r in results if r['rows']]
+        result = {''.join(r['key']): r['value']
+                  for r in rows if ''.join(r['key']) != 'und'}
+        return result if detail else {sa: callback(result)}
 
 
 @geo_bp.route('/')
