@@ -116,7 +116,9 @@ def get_count(sa, start, end):
         c = Counter()
         for v in result.values():
             c.update(v)
-        del c['und']
         return c
 
-    return summary_with_time('lang/by_zone', sa, start, end, callback)
+    result = summary_with_time('lang/by_zone', sa, start, end, callback)
+    for v in result.values():
+        del v['und']
+    return result
