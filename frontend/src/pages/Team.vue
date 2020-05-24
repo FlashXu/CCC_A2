@@ -43,7 +43,7 @@
                   height="150"
                   width="150"
                 />
-                <h4 class="title">Qiangxing Lin</h4>
+                <h4 class="title">Xinglin Qiang</h4>
                 <p class="category text-primary">Backend Engineer</p>
               </div>
             </div>
@@ -87,7 +87,7 @@
                   height="150"
                   width="150"
                 />
-                <h4 class="title">Catrina</h4>
+                <h4 class="title">Shaohua Liu</h4>
                 <p class="category text-primary">Data Analyst</p>
               </div>
             </div>
