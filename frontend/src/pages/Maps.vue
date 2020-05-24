@@ -25,9 +25,85 @@
         <p id="text6">$150,000</p>
       </div>
       <div id="displayBar">
-        <b-progress v-if="displayOption=='population'" :value="sa3_total_population" :max="populationMax" show-progress animated></b-progress>
-        <b-progress v-if="displayOption=='income'" :value="sa3_mean_income" :max="incomeMax" show-progress animated></b-progress>
+        <b-progress
+          v-if="displayOption == 'population'"
+          :value="sa3_total_population"
+          :max="populationMax"
+          show-progress
+          animated
+        ></b-progress>
+        <b-progress
+          v-if="displayOption == 'income'"
+          :value="sa3_mean_income"
+          :max="incomeMax"
+          show-progress
+          animated
+        ></b-progress>
       </div>
+
+      <div id="hashtagGroup" v-if="displayOption == 'hashtags'">
+        <b-button-group>
+          <b-button varient="danger" v-b-toggle="'top hashtags'">
+            Top 30</b-button
+          >
+          <b-button right varient="danger" v-b-toggle="'traveler'">
+            Traveler</b-button
+          >
+          <b-button right varient="danger" v-b-toggle="'non-traveler'">
+            Non-traveler</b-button
+          >
+        </b-button-group>
+        <b-collapse id="top hashtags">
+          <b-card img-src="img/hashtags.png" style="max-width: 350px;"></b-card>
+        </b-collapse>
+        <b-collapse id="traveler">
+          <b-button-group vertical>
+            <b-dropdown id="dropdown-dropright" dropright text="Festival">
+              <b-dropdown-item href="#">happybirthday</b-dropdown-item>
+              <b-dropdown-item href="#">fathersday</b-dropdown-item>
+              <b-dropdown-item href="#">mothersday</b-dropdown-item>
+              <b-dropdown-item href="#">merrychristmas</b-dropdown-item>
+              <b-dropdown-item href="#">australiaday</b-dropdown-item>
+            </b-dropdown>
+            <b-dropdown id="dropdown-dropright" dropright text="Drink">
+              <b-dropdown-item href="#">beeroclock</b-dropdown-item>
+              <b-dropdown-item href="#">drinklocal</b-dropdown-item>
+            </b-dropdown>
+            <b-dropdown id="dropdown-dropright" dropright text="Tour">
+              <b-dropdown-item href="#">mpexperience</b-dropdown-item>
+              <b-dropdown-item href="#">streakbay</b-dropdown-item>
+              <b-dropdown-item href="#">darlingbarhour</b-dropdown-item>
+              <b-dropdown-item href="#">sufersparadise</b-dropdown-item>
+            </b-dropdown>
+          </b-button-group>
+        </b-collapse>
+        <b-collapse id="non-traveler">
+          <b-button-group vertical>
+            <b-dropdown id="dropdown-dropright" dropright text="Sport">
+              <b-dropdown-item href="#">ausvind</b-dropdown-item>
+              <b-dropdown-item href="#">cwc15</b-dropdown-item>
+              <b-dropdown-item href="#">bbl04</b-dropdown-item>
+              <b-dropdown-item href="#">ausopen</b-dropdown-item>
+              <b-dropdown-item href="#">endomondo</b-dropdown-item>
+              <b-dropdown-item href="#">iamcarlton</b-dropdown-item>
+            </b-dropdown>
+            <b-dropdown id="dropdown-dropright" dropright text="Music">
+              <b-dropdown-item href="#">nowplaying</b-dropdown-item>
+              <b-dropdown-item href="#">navyblues</b-dropdown-item>
+              <b-dropdown-item href="#">riseandshine</b-dropdown-item>
+              <b-dropdown-item href="#">australianmusic</b-dropdown-item>
+              <b-dropdown-item href="#">Vote5sos</b-dropdown-item>
+              <b-dropdown-item href="#">fans1d</b-dropdown-item>
+            </b-dropdown>
+            <b-dropdown id="dropdown-dropright" dropright text="News">
+              <b-dropdown-item href="#">QandA</b-dropdown-item>
+              <b-dropdown-item href="#">auspol</b-dropdown-item>
+              <b-dropdown-item href="#">victraffic</b-dropdown-item>
+            </b-dropdown>
+          </b-button-group>
+        </b-collapse>
+      </div>
+
       <b-sidebar
         id="sidebar-variant"
         title="Display options"
@@ -265,7 +341,7 @@ export default {
     return {
       map: null,
       mapLayer: null,
-      tourismLayer:null,
+      tourismLayer: null,
       markers: [],
       displayOption: "null",
       displayCard: false,
@@ -698,7 +774,6 @@ export default {
             this.populationMin = population;
           }
         }
-
       });
       return maplayer;
     },
@@ -830,9 +905,12 @@ export default {
         center: new google.maps.LatLng(-36.380542, 148.051793),
         panControl: false,
       };
+      this.tourismLayer.setMap(null);
       this.map.setOptions(myOptions);
     },
     displayTourism: function() {
+      this.hideDisplay();
+      this.displayOption = "hashtags";
       this.tourismLayer.setMap(this.map);
     },
     displayPopulation: function() {
@@ -845,13 +923,14 @@ export default {
         center: new google.maps.LatLng(-36.380542, 148.051793),
         panControl: false,
       };
+      this.tourismLayer.setMap(null);
       this.map.setOptions(myOptions);
     },
     hideDisplay: function() {
       this.mapLayer.forEach(function(feature) {
         feature.setProperty("displayOption", "null");
       });
-      this,displayOption = "null";
+      this.displayOption = "null";
       this.tourismLayer.setMap(null);
     },
     goPie() {
@@ -1012,6 +1091,12 @@ export default {
   width: 250px;
 }
 
+#hashtagGroup {
+  position: absolute;
+  top: 100px;
+  right: 100px;
+}
+
 .floating-box {
   width: 300px;
   height: 500px;
@@ -1119,8 +1204,8 @@ form.example::after {
 
 #displayBar {
   position: absolute;
-  width:300px;
-  height:60px;
+  width: 300px;
+  height: 60px;
   bottom: 400px;
   right: 200px;
   z-index: 99;
