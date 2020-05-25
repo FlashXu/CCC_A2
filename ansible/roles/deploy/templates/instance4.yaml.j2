@@ -26,3 +26,26 @@ services:
     ports:
       - 80:80
     restart: always
+
+  stream_harvester:
+    container_name: stream_harvester
+    build: harvester
+    image: python:90024
+    command: TwitterStream.py
+    volumes:
+      - '{{ working_dir }}/harvester:/workspace'
+    logging:
+      options:
+        max-size: 10m
+
+  user_expansion:
+    container_name: expansion
+    build: harvester
+    image: python:90024
+    command: api_expand.py
+    volumes:
+      - '{{ working_dir }}/harvester:/workspace'
+    logging:
+      options:
+        max-size: 10m
+    

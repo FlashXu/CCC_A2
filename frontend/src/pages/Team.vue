@@ -88,7 +88,7 @@
                   width="150"
                 />
                 <h4 class="title">Shaohua Liu</h4>
-                <p class="category text-primary">Data Analyst</p>
+                <p class="category text-primary">Backend Developer</p>
               </div>
             </div>
 
