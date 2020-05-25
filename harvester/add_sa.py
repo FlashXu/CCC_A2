@@ -14,7 +14,7 @@ def get_zone(geo, zones):
 
 
 def load_zones(file='SA2'):
-    raw = ujson.load(open(f'../aurin/{file}.json'))
+    raw = ujson.load(open(f'{file}.json'))
     return {zone['properties']['feature_code']: shape(
         zone['geometry']) for zone in raw['features']}
 
@@ -27,20 +27,21 @@ def add_zone(doc, zones):
 
 def main(chunk_size=500):
 
-    db = utils.db(url='172.26.131.114:5984')
-    # db = utils.db(url='45.88.195.224:9001')
+    db = utils.db()
 
     zones = load_zones()
     while True:
         try:
-            rows = db.view('process/SA', include_docs=True,
-                           reduce=False, limit=200, skip=400)
+            rows = db.view('geo/by_zone',
+                           include_docs=True, reduce=False, limit=chunk_size)[None]
             print(f'Get {len(rows)} data...')
             docs = [add_zone(row.doc, zones) for row in rows]
-            if not docs:
+            if docs:
+                result = db.update(docs)
+                print(f'{sum([r[0] for r in result])}/{len(docs)} updated.')
+                time.sleep(0.5)
+            else:
                 time.sleep(20)
-            result = db.update(docs)
-            print(f'{sum([r[0] for r in result])}/{len(docs)} updated.')
         except:
             time.sleep(5)
 

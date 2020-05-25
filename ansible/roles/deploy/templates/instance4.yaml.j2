@@ -48,4 +48,17 @@ services:
     logging:
       options:
         max-size: 10m
-    
+
+  sa_classifier:
+    container_name: classifier
+    build:
+      context: harvester
+      dockerfile: Dockerfile_shapely
+    image: python:shapely
+    command: add_sa.py
+    volumes:
+      - '{{ working_dir }}/harvester:/workspace'
+      - '{{ working_dir }}/aurin/SA2.json:/workspace/SA2.json'
+    logging:
+      options:
+        max-size: 10m

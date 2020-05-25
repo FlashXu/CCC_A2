@@ -5,10 +5,15 @@
     owner: "{{ ansible_user }}"
     group: "{{ ansible_user }}"
 
+- name: unzip SA2
+  unarchive:
+    src: '{{ working_dir }}/aurin/SA2.json.zip'
+    dest: '{{ working_dir }}/aurin/'
+    remote_src: yes
+
 - name: run docker compose
   docker_compose:
     project_src: "{{ working_dir }}"
-    pull: yes
     build: yes
     # state: absent
     remove_orphans: yes

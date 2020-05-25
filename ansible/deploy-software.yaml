@@ -1,10 +1,25 @@
+- hosts: db_server
+  become: yes
+  gather_subset: network
+  vars_files:
+    - host_vars/remote_vars.yaml
+  roles:
+    - role: couchdb
+
 - hosts: instance4
   become: yes
   gather_subset: min
-
   vars_files:
     - host_vars/remote_vars.yaml
 
   roles:
     - role: remote-git-pull
     - role: deploy
+
+- hosts: all
+  become: yes
+  gather_facts: no
+  vars_files:
+    - host_vars/remote_vars.yaml
+  roles:
+    - role: remote-user-timeline

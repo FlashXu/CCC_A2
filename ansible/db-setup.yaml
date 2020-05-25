@@ -1,9 +1,0 @@
-- hosts: db_server
-  become: yes
-  gather_subset: network
-
-  vars_files:
-    - host_vars/remote_vars.yaml
-
-  roles:
-    - role: couchdb
