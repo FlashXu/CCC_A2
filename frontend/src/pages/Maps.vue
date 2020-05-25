@@ -216,12 +216,6 @@
                 <button class="mixedBtn2" v-on:click="goMixed1">
                   <a id="premium">Tweets & Age</a>
                 </button>
-                <b-img
-                  id="sidebarpic"
-                  src="https://picsum.photos/500/500/?image=54"
-                  fluid
-                  thumbnail
-                ></b-img>
               </div>
             </div>
           </div>
