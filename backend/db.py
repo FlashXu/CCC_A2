@@ -92,15 +92,10 @@ def next_expand():
 @bp.route('/queue_stat')
 @swag_from('docs/q_stat.yml')
 def q_stat():
-    q = request.args.get('task')
-    if q == 'search':
-        return str(search_q.qsize())
-    elif q == 'expand':
-        return str(expand_q.qsize())
-    abort(404)
+    return {'search': search_q.qsize(), 'expand': expand_q.qsize()}
+
 
 @bp.route('/active_tasks')
 def active_tasks():
     return redirect(f'{utils.base()}/_active_tasks')
-
 

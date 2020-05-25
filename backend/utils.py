@@ -64,8 +64,8 @@ class RedisQueue(object):
 
 template = {
     'info': {
-        'description': 'This is the API of the backend, including queries the count for each statistic area(SA) of Australia',
-        'version': '0.0.1',
+        'description': 'This is the API of the backend, including database monitor, task queue monitor, data analysis and persistance',
+        'version': '1.0',
         'title': '2020-S1 COMP90024-Team22 backend',
         'contact': {
             'email': 'xqiang@student.unimelb.edu.au'
