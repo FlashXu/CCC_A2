@@ -10,6 +10,8 @@ import json
 
 geo_bp = Blueprint('geo', __name__)
 lang_bp = Blueprint('language', __name__)
+hashtag_bp = Blueprint('hashtag', __name__)
+
 db = utils.db()
 sa2 = json.load(open('sa2.json', 'r'))
 
@@ -122,3 +124,12 @@ def get_count(sa, start, end):
     for v in result.values():
         del v['und']
     return result
+
+@hashtag_bp.route('/<hashtag>')
+@swag_from('docs/hashtag_count.yml')
+def hashtag_count(hashtag):
+    r = db.view('hashtag/count', key=hashtag.lower()).rows
+    count = 0
+    if r:
+        count = r[0].value
+    return {hashtag: count}

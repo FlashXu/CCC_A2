@@ -16,9 +16,10 @@ def db(name='tweets', url='172.26.131.114:5984', username='admin', password='adm
 class RedisQueue(object):
     """Simple Queue with Redis Backend"""
 
-    def __init__(self, name, namespace='queue', **redis_kwargs):
-        """The default connection parameters are: host='localhost', port=6379, db=0"""
-        self.__db = Redis(**redis_kwargs)
+    def __init__(self, name, namespace='queue', host='redis', **redis_kwargs):
+        """The default connection parameters are: host='redis', port=6379, db=0"""
+        self.__db = Redis(host=host, **redis_kwargs)
+        self.name = name
         self.key = f'{namespace}:{name}'
 
     def __len__(self):

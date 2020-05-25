@@ -1,5 +1,4 @@
-from flask import jsonify, make_response, Blueprint, abort, redirect
-from auth import auth
+from flask import jsonify, make_response, Blueprint, abort, redirect, request
 from atexit import register
 from time import sleep
 from threading import Thread
@@ -10,26 +9,27 @@ import json
 
 
 bp = Blueprint('db', __name__)
-q = utils.RedisQueue('db', host='redis')
+search_q = utils.RedisQueue('searched')
+expand_q = utils.RedisQueue('expanded')
 
 
 def on_startup():
-    def acquire_user(threshold=400):
+    def acquire_user(q, threshold):
         while True:
             try:
                 if q.qsize() < threshold:
-                    rows = db.view('tree/searched', limit=threshold, reduce=False,
+                    rows = db.view(f'tree/{q.name}', limit=threshold, reduce=False,
                                    include_docs=True)[[False]:[False, {}]].rows
                     users = []
                     for row in rows:
                         user = row.doc
-                        user['searched'] = 'queue'
+                        user[q.name] = 'queue'
                         users.append(user)
 
                     if users:   # wait for 5 seconds to next fetch
                         results = db.update(users)
                         logging.warning(
-                            f'Put {sum([r[0] for r in results])} into queue ...')
+                            f'Put {sum([r[0] for r in results])} into {q.name} queue ...')
                         for user, (suc, uid, rev) in zip(users, results):
                             if suc:
                                 user['_rev'] = rev
@@ -42,19 +42,21 @@ def on_startup():
                 logging.error(repr(e))
                 sleep(1)
 
-    Thread(target=acquire_user, daemon=True).start()
+    Thread(target=acquire_user, daemon=True, args=(search_q, 200,)).start()
+    Thread(target=acquire_user, daemon=True, args=(expand_q, 10,)).start()
 
 
 @register
 def on_exit():
-    users = []
-    while not q.empty():
-        user = json.loads(q.get())
-        user['searched'] = False
-        users.append(user)
-    result = db.update(users)
-    logging.warning(
-        f'Put back {sum([r[0] for r in result])} users from queue to db.')
+    for q in [search_q, expand_q]:
+        users = []
+        while not q.empty():
+            user = json.loads(q.get())
+            user['searched'] = False
+            users.append(user)
+        result = db.update(users)
+        logging.warning(
+            f'Put back {sum([r[0] for r in result])} users from {q.name} queue to db.')
 
 
 db = utils.db(name='users')
@@ -74,16 +76,31 @@ def monitor(level):
 
 
 @bp.route('/next_search')
+@swag_from('docs/next_search.yml')
 def next_search():
-    user = q.get_nowait()
+    user = search_q.get_nowait()
     return user if user else {}
 
 
-@bp.route('/queue')
-def q_stat():
-    return str(q.qsize())
+@bp.route('/next_expand')
+@swag_from('docs/next_expand.yml')
+def next_expand():
+    user = expand_q.get_nowait()
+    return user if user else {}
 
+
+@bp.route('/queue_stat')
+@swag_from('docs/q_stat.yml')
+def q_stat():
+    q = request.args.get('task')
+    if q == 'search':
+        return str(search_q.qsize())
+    elif q == 'expand':
+        return str(expand_q.qsize())
+    abort(404)
 
 @bp.route('/active_tasks')
 def active_tasks():
     return redirect(f'{utils.base()}/_active_tasks')
+
+
