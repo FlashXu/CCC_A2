@@ -3,6 +3,7 @@ import tweepy
 import time
 import sys
 from concurrent.futures import ThreadPoolExecutor
+from itertools import cycle
 from threading import Event
 from random import randrange
 from queue import Queue
@@ -33,8 +34,8 @@ def acquire_user():
 
 
 # consumer
-def expand(n):
-    api = utils.api(n)
+def expand():
+    token = cycle(range(len(utils.credential)))
     while not stop.isSet():
         try:
             user = q.get_nowait()
@@ -43,6 +44,8 @@ def expand(n):
             continue
 
         try:
+            n = next(token)
+            api = utils.api(n)
             level = user['level'] + 1
             uid = user["_id"]
 
@@ -78,8 +81,7 @@ def main(worker_size):
     try:
         with ThreadPoolExecutor(max_workers=worker_size + 1) as executor:
             executor.submit(acquire_user)
-            for i in range(worker_size):
-                executor.submit(expand, i + offset)
+            [executor.submit(expand) for _ in range(worker_size)]
     except KeyboardInterrupt:
         print('\nInterupt Detect! Stopping...')
         stop.set()
@@ -93,12 +95,10 @@ def main(worker_size):
 
 
 if __name__ == "__main__":
-    worker_size = 18
-    offset = 1 * worker_size
+    worker_size = 3
 
     db = utils.db(name='users', url='172.26.133.133:5984')
-    # db = utils.db(name='user', url='45.88.195.224:9001')
-    # db = utils.db(url='45.88.195.224:9001')
+    # db = utils.db(name='users', url='45.88.195.224:9001')
     stop = Event()
     q = Queue(3 * worker_size)
     main(worker_size)

@@ -1,12 +1,10 @@
 import utils
 import tweepy
 import time
-import sys
 from threading import Event
 from concurrent.futures import ThreadPoolExecutor
-from queue import Queue, Empty
 from traceback import print_exception
-from itertools import islice
+from itertools import islice, cycle
 from datetime import datetime
 import requests
 import json
@@ -60,20 +58,21 @@ class Counter:
 
 
 # consumer
-def search(n):
-    api = utils.api(n)
+def search():
+    token = cycle(range(len(utils.credential)))
     while not stop.isSet():
         user = acquire_user()
         if not user:
             time.sleep(5)
             continue
         try:
-            # skip this user if the geo rate is less than threshold
+            n = next(token)
+            api = utils.api(n)
             counter = Counter()
             for statuses in utils.split_every(user_tweets(api, user['_id']), 100):
                 parsed_data = utils.bulk_parse_tweet(
                     [s._json for s in statuses])
-                
+
                 if parsed_data:
                     result = db.update(parsed_data)
                     success = sum([r[0] for r in result])
@@ -84,6 +83,7 @@ def search(n):
 
                 info = f'Key {n:3} {user["_id"]:19} :  Place {len(parsed_data):2}/{len(statuses):3}  Upload {success:2}  Rate {counter.rate():4.1f}%'
 
+                # skip this user if the geo rate is less than threshold
                 if counter.abort():
                     print(f'{info}  Abort...')
                     break
@@ -93,7 +93,8 @@ def search(n):
             # promote the user level for further friends/follower BFS searching
             if counter.promote():
                 user['level'] = 0
-                print(f'Key {n:3} {user["_id"]:19} :  Maximum {counter.maximum:4.1f}%  Final {counter.rate():4.1f}%  Promote!!!')
+                print(
+                    f'Key {n:3} {user["_id"]:19} :  Maximum {counter.maximum:4.1f}%  Final {counter.rate():4.1f}%  Promote!!!')
 
             user['searched'] = True
         except Exception as e:
@@ -110,8 +111,7 @@ def search(n):
 def main(worker_size):
     try:
         with ThreadPoolExecutor(worker_size) as e:
-            futures = [e.submit(search, i + offset)
-                       for i in range(worker_size)]
+            futures = [e.submit(search) for _ in range(worker_size)]
 
             def callback(worker):
                 e = worker.exception()
@@ -127,12 +127,7 @@ def main(worker_size):
 
 
 if __name__ == "__main__":
-    worker_size = 18
-    offset = int(sys.argv[-1]) * worker_size
-
-    if offset < 0:
-        print('Please specify "-e INDEX" before start the container.')
-        sys.exit(-1)
+    worker_size = 3
 
     backend_ip = '45.88.195.224:5000'
     db_ip = '45.88.195.224:9001'
