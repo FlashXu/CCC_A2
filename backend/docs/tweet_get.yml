@@ -1,0 +1,15 @@
+Query the tweet with specified id.
+---
+tags:
+  - Persistance
+parameters:
+  - in: path
+    name: id
+    description: id of the tweet
+    default: "100006344:509305657598554112"
+    required: true
+responses:
+  200:
+    description: OK
+  404:
+    description: No such tweet

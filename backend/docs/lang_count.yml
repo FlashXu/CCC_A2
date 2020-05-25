@@ -2,7 +2,7 @@ Get the language stats for all statistic area. (Time aggregated data please use 
 <b>Note:</b> Retrieve data of all SA2 (level=3) is relatively slow, please consider using muti-threads queries with sub-area.
 ---
 tags:
-  - language
+  - Data Analysis
 parameters:
   - name: level
     in: query

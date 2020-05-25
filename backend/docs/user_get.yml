@@ -1,0 +1,15 @@
+Query the user with specified id.
+---
+tags:
+  - Persistance
+parameters:
+  - in: path
+    name: id
+    description: id of the user
+    default: "100042198"
+    required: true
+responses:
+  200:
+    description: OK
+  404:
+    description: No such tweet

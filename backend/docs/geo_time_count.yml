@@ -1,7 +1,7 @@
 Get the count of tweets with geo enabled within the given time period.
 ---
 tags:
-  - geo
+  - Data Analysis
 parameters:
   - name: sa
     in: path

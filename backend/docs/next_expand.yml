@@ -1,0 +1,7 @@
+Get next user for friends/followers relationship expansion.
+---
+tags:
+  - Task Queue
+responses:
+  200:
+    description: User for expansion

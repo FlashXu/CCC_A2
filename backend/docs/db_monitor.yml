@@ -1,7 +1,7 @@
 This is the monitor of the database.
 ---
 tags:
-  - db
+  - Database
 parameters:
   - in: path
     name: level

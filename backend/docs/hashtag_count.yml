@@ -1,0 +1,13 @@
+Get the count of the specific hashtag.
+---
+tags:
+  - Data Analysis
+parameters:
+  - name: hashtag
+    in: path
+    description: the query hashtag
+    required: true
+    default: sydney
+responses:
+  200:
+    description: OK

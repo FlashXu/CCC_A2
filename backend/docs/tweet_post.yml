@@ -1,0 +1,14 @@
+Save the tweet specified in json.
+---
+tags:
+  - Persistance
+parameters:
+  - in: body
+    name: body
+    required: true
+
+responses:
+  200:
+    description: OK
+  400:
+    description: Document Update Conflict

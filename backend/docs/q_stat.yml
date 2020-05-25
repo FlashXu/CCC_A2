@@ -1,0 +1,14 @@
+This is the monitor of the task queue.
+---
+tags:
+  - Task Queue
+parameters:
+  - in: query
+    name: task
+    description: name of the task
+    enum: ["search", "expand"]
+    default: "search"
+    required: true
+responses:
+  200:
+    description: OK

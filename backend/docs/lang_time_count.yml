@@ -1,7 +1,7 @@
 Get the language stats within the given time period.
 ---
 tags:
-  - language
+  - Data Analysis
 parameters:
   - name: sa
     in: path

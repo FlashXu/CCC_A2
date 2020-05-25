@@ -1,0 +1,7 @@
+Get next user for historical tweets searching.
+---
+tags:
+  - Task Queue
+responses:
+  200:
+    description: User for searching
