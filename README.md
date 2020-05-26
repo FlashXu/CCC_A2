@@ -11,7 +11,7 @@
 * Frontend Presentation: https://www.youtube.com/watch?v=U7CeZP5M2pg
 
 ## PPT
-xxx
+https://docs.google.com/presentation/d/1lHyXfbnZippj-mTEOOd4DEFluJahy7uEq7374V0ezD8/edit?usp=sharing
 
 ## How to install
 Clone this repository
