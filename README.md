@@ -13,7 +13,7 @@ Frontend Presentation: xxx
 ## PPT
 
 ## How to install
-Glone this repository
+Clone this repository
 
 ```bash
 cd ansible
@@ -25,3 +25,32 @@ cd ansible
 Then access the webpage through http://172.26.132.92
 
 Backend API can be accessed through http://172.26.132.92:5000
+
+
+## Instance Arrangement
+
+Instance1: 172.26.131.114
+    
+    CouchDB/ couchdb:latest
+    Harvester/
+
+
+Instance2: 172.26.130.201
+    
+    CouchDB/ couchdb:latest
+    Harvester/
+
+
+Instance3: 172.26.133.133
+    
+    CouchDB/ couchdb:latest
+    Harvester/
+
+
+Instance4: 172.26.132.92
+
+    Frontend/ node:lts-alpine & nginx:stable-alpine
+    Backend/ python:3.7-alpine & redis:latest
+    Stream_Harvester/
+    User_Expansion/
+    SA_Classifier/ python:3.7-slim
