@@ -1,5 +1,5 @@
-# CCC-A2 Group 22
-Team Members:
+# CCC-A2 Team 22
+## Team Members:
 * [Xinglin Qiang - 1153086](https://github.com/qiangxinglin)
 * [Shaohua Liu - 1150336](https://github.com/sliu15)
 * [Wentao Hao - 1096215](https://github.com/Taylorrrr)
