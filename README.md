@@ -7,10 +7,11 @@ Team Members:
 * [Yichao Xu - 1045184](https://github.com/FlashXu)
 
 ## Video links
-Ansible Deployment: xxx
-Frontend Presentation: xxx
+Ansible Deployment: https://www.youtube.com/watch?v=_uzXLX3cHwQ
+Frontend Presentation: https://www.youtube.com/watch?v=U7CeZP5M2pg
 
 ## PPT
+xxx
 
 ## How to install
 Clone this repository

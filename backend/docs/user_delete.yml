@@ -12,4 +12,4 @@ responses:
   200:
     description: OK
   404:
-    description: No such tweet
+    description: No such user
